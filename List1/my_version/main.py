@@ -1,28 +1,17 @@
-from List1.my_version.model import ForestFire
-from List1.my_version.percolation import find_percolation_threshold, calculate_threshold_for_different_densities, print_thresholds
+from List1.my_version.model import ForestFire, average_size_as_a_function_of_density, plot_avg_size_of_biggest_cluster
+from List1.my_version.percolation import find_percolation_threshold, calculate_threshold_for_different_densities, plot_thresholds
 # from List1.my_version.test import Solution
+from List1.my_version.hoshen_kapelman import hoshen_kapelman_alghoritm
 
 
 def main():
-    # model = ForestFire(10, 10, .5)
-    # #model.print()
-    # model.burn_forest()
-    # model.print()
-    # print('\n')
-    # #model.hohesh_kopelman()
-    # model.hoshen_kapelman_alghoritm()
-    # model.print()
-    #print(model.labels)
-    #print(model.biggest_cluster())
-    # model.animate_and_simulate('elo')
-    # model.print()
-    #hoshen_kapelman_alghoritm(model)
-    # claster = Solution(model.grid)
-    # result = claster.largestIsland()
-    # print(result)
-    # claster.print()
-    print_thresholds(calculate_threshold_for_different_densities())
-    #print(calculate_threshold_for_different_densities())
+    plot_thresholds(calculate_threshold_for_different_densities(width=20, height=20))
+    print(calculate_threshold_for_different_densities())
+
+    list = average_size_as_a_function_of_density()
+    plot_avg_size_of_biggest_cluster(list)
+    print(list)
+
 
 if __name__ == '__main__':
     main()

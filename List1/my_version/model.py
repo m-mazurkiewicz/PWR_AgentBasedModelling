@@ -4,6 +4,8 @@ import numpy as np
 import matplotlib.animation as animation
 import queue
 from collections import Counter
+from List1.my_version.hoshen_kapelman import hoshen_kapelman_alghoritm
+
 
 class ForestFire:
     def __init__(self, height=100, width=100, density=0.65):
@@ -90,6 +92,14 @@ class ForestFire:
             #nx.draw_networkx_nodes(self.graph, pos=pos, nodelist=[i], node_size=50, node_color='g')
             #plt.title('time ' + str(t) + ', node ' + str(i))
 
+    def average_size_of_the_biggest_cluster(self):
+        average_size = 0
+        number_of_iterations = 0
+        while not self.burning_trees.empty():
+            self.single_step()
+            average_size += hoshen_kapelman_alghoritm(self)
+            number_of_iterations += 1
+        return average_size/number_of_iterations
 
     def hoshen_kapelman_alghoritm(self):
         burnt_trees_test = list(self.grid)
@@ -142,3 +152,15 @@ class ForestFire:
 
     def union(self, first_field, second_field):
         self.labels[self.find(first_field)] = self.find(second_field)
+
+def average_size_as_a_function_of_density(lowest_density=.2, highest_density=.9, number_of_densities_to_check=80, width=100, height=100):
+    list_of_sizes = dict()
+    for density in np.linspace(lowest_density, highest_density, number_of_densities_to_check, endpoint=False):
+        model = ForestFire(width, height, density)
+        list_of_sizes[density] = model.average_size_of_the_biggest_cluster()
+    return list_of_sizes
+
+def plot_avg_size_of_biggest_cluster(dict_of_averages):
+    x, y = zip(*dict_of_averages.items())
+    plt.plot(x, y)
+    plt.show()
