@@ -20,4 +20,5 @@ def calculate_threshold_for_different_densities(lowest_density=.2, highest_densi
 def plot_thresholds(dict_of_thresholds):
     x, y = zip(*dict_of_thresholds.items())
     plt.plot(x, y)
+    #plt.savefig('percolation100.png')
     plt.show()
