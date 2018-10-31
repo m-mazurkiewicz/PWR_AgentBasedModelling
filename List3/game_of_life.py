@@ -3,7 +3,7 @@ import numpy as np
 
 
 class GameOfLife:
-    def __init__(self, height=100, width=100, density=0.65):
+    def __init__(self, height=100, width=100, density=0.2):
         self.height = height
         self.width = width
         self.density = density
@@ -28,3 +28,10 @@ class GameOfLife:
                     if self.grid[x + i][y + j] == 1:
                         living_neighbors += 1
         return living_neighbors
+
+    #helping method
+    def print(self):
+        for x in range(self.width):
+            for y in range(self.height):
+                print(self.grid[x][y], end=' ')
+            print('\n')
