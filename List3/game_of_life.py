@@ -1,21 +1,18 @@
 import random
 import numpy as np
+import pylab
 
 
 class GameOfLife:
-    def __init__(self, height=100, width=100, density=0.2):
+    def __init__(self, height=100, width=100, initial_density=0.2):
         self.height = height
         self.width = width
-        self.density = density
+        self.initial_density = initial_density
         self.grid = np.zeros((width, height))
-        # self.burning_trees = queue.Queue()
-        # self.to_be_burn = queue.Queue()
-        # self.labels = []
-        # self.burned_trees = []
 
         for x in range(self.width):
             for y in range(self.height):
-                if random.random() < self.density:
+                if random.random() < self.initial_density:
                     self.grid[x][y] = 1
 
     def count_living_neighbours(self, cell):
@@ -24,7 +21,7 @@ class GameOfLife:
         living_neighbors = 0
         for i in [-1, 0, 1]:
             for j in [-1, 0, 1]:
-                if (x + i >=0) and (x + i < self.width) and (y + j >=0) and (y + j < self.height) and i != 0 and j != 0:
+                if (x + i >=0) and (x + i < self.width) and (y + j >=0) and (y + j < self.height) and (x+i != x or y+j != y):
                     if self.grid[x + i][y + j] == 1:
                         living_neighbors += 1
         return living_neighbors
@@ -43,12 +40,20 @@ class GameOfLife:
                         new_grid[x][y] = 1
         self.grid = new_grid
 
-
-
+    def play(self, number_of_iterations):
+        for i in range(number_of_iterations):
+            self.one_step()
 
     #helping method
     def print(self):
-        for x in range(self.width):
-            for y in range(self.height):
-                print(self.grid[x][y], end=' ')
-            print('\n')
+        pylab.pcolormesh(self.grid)
+        pylab.show()
+        # for x in range(self.width):
+        #     for y in range(self.height):
+        #         print(self.grid[x][y], end=' ')
+        #     print('\n')
+
+
+if __name__ == '__main__':
+    game = GameOfLife(10, 10, .2)
+    game.play(5)
