@@ -1,6 +1,8 @@
 import random
 import numpy as np
 import pylab
+from matplotlib import animation
+import matplotlib.pyplot as plt
 
 
 class GameOfLife:
@@ -44,6 +46,21 @@ class GameOfLife:
         for i in range(number_of_iterations):
             self.one_step()
 
+    def animate_and_simulate(self, file_path_and_name, number_of_iterations, duration = 15):
+        image_magick = animation.writers['imagemagick']
+        fps = np.ceil(20/ float(duration))
+        writer = image_magick(fps=fps)
+        fig = plt.figure()
+        ax = plt.gca()
+        plt.axis('off')
+        #cmap = mpl.colors.ListedColormap(['white', 'green', 'red', 'black'])
+        ax.imshow(self.grid)#, cmap=cmap)
+        with writer.saving(fig, file_path_and_name+".gif", 100):
+            for i in range(number_of_iterations):
+                self.one_step()
+                ax.imshow(self.grid)#, cmap=cmap)
+                writer.grab_frame()
+
     #helping method
     def print(self):
         pylab.pcolormesh(self.grid)
@@ -54,6 +71,8 @@ class GameOfLife:
         #     print('\n')
 
 
+
 if __name__ == '__main__':
-    game = GameOfLife(10, 10, .2)
-    game.play(5)
+    game = GameOfLife(100, 100, .2)
+    game.animate_and_simulate('first_animation', 100)
+    #game.play(5)
