@@ -1,6 +1,5 @@
 import random
 import numpy as np
-import pylab
 from matplotlib import animation
 import matplotlib.pyplot as plt
 
@@ -51,25 +50,27 @@ class GameOfLife:
         for i in range(number_of_iterations):
             self.one_step()
 
-    def animate_and_simulate(self, file_path_and_name, number_of_iterations, duration = 15):
+    def animate_and_simulate(self, file_path_and_name, number_of_iterations, duration=15):
         image_magick = animation.writers['imagemagick']
-        fps = np.ceil(20/ float(duration))
+        fps = np.ceil(20 / float(duration))
         writer = image_magick(fps=fps)
         fig = plt.figure()
         ax = plt.gca()
         plt.axis('off')
-        #cmap = mpl.colors.ListedColormap(['white', 'green', 'red', 'black'])
+        # cmap = mpl.colors.ListedColormap(['white', 'green', 'red', 'black'])
         ax.imshow(self.grid)#, cmap=cmap)
         with writer.saving(fig, file_path_and_name+".gif", 100):
+            writer.grab_frame()
             for i in range(number_of_iterations):
                 self.one_step()
                 ax.imshow(self.grid)#, cmap=cmap)
                 writer.grab_frame()
 
-    #helping method
+    # helping method
     def print(self):
-        pylab.pcolormesh(self.grid)
-        pylab.show()
+        ax = plt.gca()
+        ax.imshow(self.grid)
+        plt.show()
         # for x in range(self.width):
         #     for y in range(self.height):
         #         print(self.grid[x][y], end=' ')
@@ -77,26 +78,15 @@ class GameOfLife:
 
 
 def read_grid_from_file(filename):
-    grid = []
     with open(filename, 'r') as file:
-    #     data = file.readlines()
-    # for line in data:
-    #     grid.append(line.split())
-    # return grid
         lines_list = file.readlines()
-    for line in reversed(lines_list):
-        grid.append([int(val) for val in line.split()])
+    grid = [[int(val) for val in line.split()] for line in lines_list]
     return grid
-    # for x in range(len(grid)):
-    #     for y in range(len(grid[0])):
-    #         print(grid[x][y], end=' ')
-    #     print('\n')
 
 
 if __name__ == '__main__':
     # game = GameOfLife(100, 100, .2)
+    # game.print()
     # game.animate_and_simulate('first_animation', 100)
-    #game.play(5)
-    #read_grid_from_file('input.txt')
     game = GameOfLife(file_name='input.txt')
-    game.print()
+    game.animate_and_simulate('animation_on_input_grid', 20)
