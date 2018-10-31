@@ -6,16 +6,21 @@ import matplotlib.pyplot as plt
 
 
 class GameOfLife:
-    def __init__(self, height=100, width=100, initial_density=0.2):
-        self.height = height
-        self.width = width
-        self.initial_density = initial_density
-        self.grid = np.zeros((width, height))
+    def __init__(self, height=100, width=100, initial_density=0.2, file_name=''):
+        if len(file_name) == 0:
+            self.height = height
+            self.width = width
+            self.initial_density = initial_density
+            self.grid = np.zeros((width, height))
 
-        for x in range(self.width):
-            for y in range(self.height):
-                if random.random() < self.initial_density:
-                    self.grid[x][y] = 1
+            for x in range(self.width):
+                for y in range(self.height):
+                    if random.random() < self.initial_density:
+                        self.grid[x][y] = 1
+        else:
+            self.grid = read_grid_from_file(file_name)
+            self.width = len(self.grid[0])
+            self.height = len(self.grid)
 
     def count_living_neighbours(self, cell):
         x = cell[0]
@@ -71,8 +76,27 @@ class GameOfLife:
         #     print('\n')
 
 
+def read_grid_from_file(filename):
+    grid = []
+    with open(filename, 'r') as file:
+    #     data = file.readlines()
+    # for line in data:
+    #     grid.append(line.split())
+    # return grid
+        lines_list = file.readlines()
+    for line in reversed(lines_list):
+        grid.append([int(val) for val in line.split()])
+    return grid
+    # for x in range(len(grid)):
+    #     for y in range(len(grid[0])):
+    #         print(grid[x][y], end=' ')
+    #     print('\n')
+
 
 if __name__ == '__main__':
-    game = GameOfLife(100, 100, .2)
-    game.animate_and_simulate('first_animation', 100)
+    # game = GameOfLife(100, 100, .2)
+    # game.animate_and_simulate('first_animation', 100)
     #game.play(5)
+    #read_grid_from_file('input.txt')
+    game = GameOfLife(file_name='input.txt')
+    game.print()
