@@ -29,6 +29,23 @@ class GameOfLife:
                         living_neighbors += 1
         return living_neighbors
 
+    def one_step(self):
+        new_grid = np.zeros_like(self.grid)
+        for x in range(self.width):
+            for y in range(self.height):
+                if self.grid[x][y] == 1:
+                    if self.count_living_neighbours((x, y)) in (2, 3):
+                        new_grid[x][y] = 1
+                    else:
+                        new_grid[x][y] = 0
+                else:
+                    if self.count_living_neighbours((x, y)) == 3:
+                        new_grid[x][y] = 1
+        self.grid = new_grid
+
+
+
+
     #helping method
     def print(self):
         for x in range(self.width):
