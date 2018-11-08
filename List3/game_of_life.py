@@ -17,9 +17,10 @@ class GameOfLife:
                     if random.random() < self.initial_density:
                         self.grid[x][y] = 1
         else:
-            self.grid = read_grid_from_file(file_name)
-            self.width = len(self.grid[0])
-            self.height = len(self.grid)
+            self.grid = read_grid_from_conway_file(file_name)
+            #self.grid = read_grid_from_file(file_name)
+            self.height = len(self.grid[0])
+            self.width = len(self.grid)
 
     def count_living_neighbours(self, cell):
         x = cell[0]
@@ -71,10 +72,6 @@ class GameOfLife:
         ax = plt.gca()
         ax.imshow(self.grid)
         plt.show()
-        # for x in range(self.width):
-        #     for y in range(self.height):
-        #         print(self.grid[x][y], end=' ')
-        #     print('\n')
 
 
 def read_grid_from_file(filename):
@@ -83,10 +80,33 @@ def read_grid_from_file(filename):
     grid = [[int(val) for val in line.split()] for line in lines_list]
     return grid
 
+def read_grid_from_conway_file(filename):
+    with open(filename, 'r') as file:
+        lines_list = file.readlines()
+    grid =[]
+    longest_line = 0
+    for line in lines_list:
+        to_append = []
+        line_length = 0
+        for val in list(line):
+            to_append.append(1 if val == 'O' else 0)
+            line_length += 1
+        del to_append[-1]
+        grid.append(to_append)
+        longest_line = max(longest_line, line_length - 1)
+    grid[-1].append(1)
+    for i in range(len(grid)):
+        if len(grid[i]) < longest_line:
+            for j in range(len(grid[i]), longest_line):
+                grid[i].append(0)
+    return grid
 
 if __name__ == '__main__':
-    # game = GameOfLife(100, 100, .2)
+    # game = GameOfLife(50, 50, .2)
     # game.print()
-    # game.animate_and_simulate('first_animation', 100)
-    game = GameOfLife(file_name='input.txt')
+    # game.animate_and_simulate('first_animation', 50)
+    game = GameOfLife(file_name='1stInput.txt')
+    game.print()
     game.animate_and_simulate('animation_on_input_grid', 20)
+    # input = read_grid_from_conway_file('1stInput.txt')
+    # print(input)
