@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 
 
 class GameOfLife:
-    def __init__(self, height=100, width=100, initial_density=0.2, file_name=''):
+    def __init__(self, height=100, width=100, initial_density=0.2, file_name='', padding=0):
         if len(file_name) == 0:
             self.height = height
             self.width = width
@@ -21,6 +21,17 @@ class GameOfLife:
             #self.grid = read_grid_from_file(file_name)
             self.height = len(self.grid[0])
             self.width = len(self.grid)
+        if padding > 0:
+            self.add_padding(padding)
+
+    def add_padding(self, padding):
+        extended_grid = np.zeros((padding, 2*padding + len(self.grid[0])), int).tolist()
+        for i in range(len(self.grid)):
+            extended_grid.append(padding * [0] + self.grid[i] + padding * [0])
+        extended_grid.extend(np.zeros((padding, 2*padding + len(self.grid[0])), int).tolist())
+        self.grid = extended_grid
+        self.height = len(self.grid[0])
+        self.width = len(self.grid)
 
     def count_living_neighbours(self, cell):
         x = cell[0]
@@ -80,6 +91,7 @@ def read_grid_from_file(filename):
     grid = [[int(val) for val in line.split()] for line in lines_list]
     return grid
 
+
 def read_grid_from_conway_file(filename):
     with open(filename, 'r') as file:
         lines_list = file.readlines()
@@ -105,8 +117,7 @@ if __name__ == '__main__':
     # game = GameOfLife(50, 50, .2)
     # game.print()
     # game.animate_and_simulate('first_animation', 50)
-    game = GameOfLife(file_name='1stInput.txt')
-    game.print()
+    game = GameOfLife(file_name='1stInput.txt', padding=2)
     game.animate_and_simulate('animation_on_input_grid', 20)
     # input = read_grid_from_conway_file('1stInput.txt')
     # print(input)
