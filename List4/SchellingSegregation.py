@@ -1,5 +1,6 @@
 import numpy as np
 import random
+from sklearn.neighbors import NearestNeighbors
 
 
 class ShellingSegregation:
@@ -22,6 +23,12 @@ class ShellingSegregation:
         self.occupied_fields = dict()
         for i in self.blue + self.red:
             self.occupied_fields[i] = [i//self.number_of_columns, i%self.number_of_columns]
+        self.neigh = NearestNeighbors(self.number_of_neighbours)
+
+    def find_neighbours_of_agent(self, x, y):
+        self.neigh.fit(list(self.occupied_fields.values()))
+        return self.neigh.kneighbors([x, y])
+
 
 
 
