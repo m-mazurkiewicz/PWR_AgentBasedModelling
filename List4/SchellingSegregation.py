@@ -29,6 +29,13 @@ class ShellingSegregation:
         self.neigh.fit(list(self.occupied_fields.values()))
         return self.neigh.kneighbors([x, y])
 
+    def make_agents_indices_from_coordinates(self, list_of_coordinates):
+        list_of_indices = []
+        for coordinates in list_of_coordinates:
+            list_of_indices.append(coordinates[0] * self.number_of_columns + self.number_of_columns)
+        return list_of_indices
+
+
 
 
 
