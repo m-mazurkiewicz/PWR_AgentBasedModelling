@@ -35,6 +35,13 @@ class ShellingSegregation:
             list_of_indices.append(coordinates[0] * self.number_of_columns + self.number_of_columns)
         return list_of_indices
 
+    def find_number_of_neighbours_of_the_same_type(self, agents_type, list_of_indices):
+        if agents_type == 'blue':
+            return sum(x in list_of_indices for x in self.blue)
+        else:
+            return sum(x in list_of_indices for x in self.red)
+
+
 
 
 
