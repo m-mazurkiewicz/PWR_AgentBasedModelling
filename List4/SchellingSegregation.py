@@ -16,9 +16,10 @@ class ShellingSegregation:
         #self.grid = self.grid.reshape(self.number_of_rows, self.number_of_columns)
 
         self.empty = np.arange(self.number_of_rows * self.number_of_columns)
-        self.blue = random.sample(self.empty, self.number_of_blue_agents)
-        self.red = random.sample(self.empty, self.number_of_red_agents)
-        self.empty = [empty for empty in self.empty if empty not in self.blue + self.red]
+        self.blue = random.sample(set(self.empty), self.number_of_blue_agents)
+        self.empty = [empty for empty in self.empty if empty not in self.blue]
+        self.red = random.sample(set(self.empty), self.number_of_red_agents)
+        self.empty = [empty for empty in self.empty if empty not in  self.red]
 
         self.occupied_fields = dict()
         for i in self.blue + self.red:
@@ -42,10 +43,13 @@ class ShellingSegregation:
             return sum(x in list_of_indices for x in self.red)
 
     def single_step(self, x, y):
-        agents_type
+        old_index = x * self.number_of_columns + y
+        if old_index in self.blue:
+            agents_type = 'blue'
+        else:
+            agents_type = 'red'
         list_of_agent_neighbours = self.find_neighbours_of_agent(x, y)
         if self.find_number_of_neighbours_of_the_same_type(agents_type, self.make_agents_indices_from_coordinates(list_of_agent_neighbours)) / len(list_of_agent_neighbours) < self.staying_threshold:
-            old_index = x * self.number_of_columns + y
             self.empty.append(old_index)
             new_index = random.sample(self.empty, 1)
             del self.occupied_fields[old_index]
@@ -64,5 +68,4 @@ class ShellingSegregation:
 
 
 if __name__ == '__main__':
-    test = ShellingSegregation(50,15,20,20)
-    test.print()
+    test = ShellingSegregation(50,15,10,10)
