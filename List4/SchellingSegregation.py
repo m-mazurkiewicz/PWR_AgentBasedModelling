@@ -19,11 +19,11 @@ class ShellingSegregation:
         self.blue = random.sample(set(self.empty), self.number_of_blue_agents)
         self.empty = [empty for empty in self.empty if empty not in self.blue]
         self.red = random.sample(set(self.empty), self.number_of_red_agents)
-        self.empty = [empty for empty in self.empty if empty not in  self.red]
+        self.empty = [empty for empty in self.empty if empty not in self.red]
 
         self.occupied_fields = dict()
         for i in self.blue + self.red:
-            self.occupied_fields[i] = [i//self.number_of_columns, i%self.number_of_columns]
+            self.occupied_fields[i] = [i // self.number_of_columns, i % self.number_of_columns]
         self.neigh = NearestNeighbors(self.number_of_neighbours)
 
     def find_neighbours_of_agent(self, x, y):
@@ -58,20 +58,27 @@ class ShellingSegregation:
             self.empty.append(old_index)
             new_index = random.sample(self.empty, 1)[0]
             del self.occupied_fields[old_index]
-            self.occupied_fields[new_index] = [new_index//self.number_of_columns, new_index%self.number_of_columns]
+            self.occupied_fields[new_index] = [new_index // self.number_of_columns, new_index % self.number_of_columns]
             if agents_type == 'blue':
                 self.blue.remove(old_index)
                 self.blue.append(new_index)
             else:
                 self.red.remove(old_index)
                 self.red.append(new_index)
+            self.agents_willing_to_move = True
 
-
-
-
-
-
+    def whole_process(self):
+        self.agents_willing_to_move = True
+        iteration = 0
+        while self.agents_willing_to_move:
+            self.agents_willing_to_move = False
+            for coordinates in list(self.occupied_fields.values()): #we can't loop over dict that is changing during iteration. This approach works, but I'm not completely sure if it fulfills lists assumptions
+                self.single_step(coordinates[0], coordinates[1])
+                #self.single_step(self.occupied_fields[key][0], self.occupied_fields[key][1])
+            iteration += 1
+        print(iteration)
 
 if __name__ == '__main__':
-    test = ShellingSegregation(50, 15, .5, 8, 10, 10)
-    test.single_step(test.red[0]//10, test.red[0]%10)
+    test = ShellingSegregation(50, 15, .5, 4, 10, 10)
+    #test.single_step(test.red[0]//10, test.red[0]%10)
+    test.whole_process()
