@@ -69,16 +69,31 @@ class ShellingSegregation:
 
     def whole_process(self):
         self.agents_willing_to_move = True
-        iteration = 0
+        number_of_cycles = 0
         while self.agents_willing_to_move:
             self.agents_willing_to_move = False
             for coordinates in list(self.occupied_fields.values()): #we can't loop over dict that is changing during iteration. This approach works, but I'm not completely sure if it fulfills lists assumptions
                 self.single_step(coordinates[0], coordinates[1])
                 #self.single_step(self.occupied_fields[key][0], self.occupied_fields[key][1])
-            iteration += 1
-        print(iteration)
+            number_of_cycles += 1
+        print(number_of_cycles)
+
+    def segregation_index(self):
+        similar_neighbour_index = 0
+        for coordinates in self.occupied_fields.values():
+            agents_index = coordinates[0] * self.number_of_columns + coordinates[1]
+            if agents_index in self.blue:
+                agents_type = 'blue'
+            else:
+                agents_type = 'red'
+            list_of_agent_neighbours = self.find_neighbours_of_agent(coordinates[0], coordinates[1])
+            similar_neighbour_index += self.find_number_of_neighbours_of_the_same_type(agents_type, self.make_agents_indices_from_coordinates(list_of_agent_neighbours)) / len(list_of_agent_neighbours)
+        return similar_neighbour_index / len(self.occupied_fields.values())
+
 
 if __name__ == '__main__':
     test = ShellingSegregation(50, 15, .5, 4, 10, 10)
-    #test.single_step(test.red[0]//10, test.red[0]%10)
     test.whole_process()
+    print(test.segregation_index())
+    print(len(test.blue))
+    print(len(test.red))
