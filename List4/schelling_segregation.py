@@ -4,10 +4,10 @@ from sklearn.neighbors import NearestNeighbors
 
 
 class ShellingSegregation:
-    def __init__(self, number_of_blue_agents, number_of_red_agents, moving_threshold, number_of_neighbours, number_of_rows=100, number_of_columns=100):
+    def __init__(self, number_of_blue_agents, number_of_red_agents, staying_threshold, number_of_neighbours, number_of_rows=100, number_of_columns=100):
         self.number_of_blue_agents = number_of_blue_agents
         self.number_of_red_agents = number_of_red_agents
-        self.staying_threshold = moving_threshold
+        self.staying_threshold = staying_threshold
         self.number_of_neighbours = number_of_neighbours
         self.number_of_rows = number_of_rows
         self.number_of_columns = number_of_columns
