@@ -27,8 +27,13 @@ class ShellingSegregation:
         self.neigh = NearestNeighbors(self.number_of_neighbours)
 
     def find_neighbours_of_agent(self, x, y):
-        self.neigh.fit(list(self.occupied_fields.values()))
-        return list(self.neigh.kneighbors([x, y]))
+        list_of_occupied_fields = list(self.occupied_fields.values())
+        self.neigh.fit(list_of_occupied_fields)
+        neighbours_indices = self.neigh.kneighbors([[x, y]])
+        neighbours = []
+        for i in neighbours_indices[1].tolist()[0]:
+            neighbours.append(list_of_occupied_fields[i])
+        return neighbours
 
     def make_agents_indices_from_coordinates(self, list_of_coordinates):
         list_of_indices = []
@@ -51,7 +56,7 @@ class ShellingSegregation:
         list_of_agent_neighbours = self.find_neighbours_of_agent(x, y)
         if self.find_number_of_neighbours_of_the_same_type(agents_type, self.make_agents_indices_from_coordinates(list_of_agent_neighbours)) / len(list_of_agent_neighbours) < self.staying_threshold:
             self.empty.append(old_index)
-            new_index = random.sample(self.empty, 1)
+            new_index = random.sample(self.empty, 1)[0]
             del self.occupied_fields[old_index]
             self.occupied_fields[new_index] = [new_index//self.number_of_columns, new_index%self.number_of_columns]
             if agents_type == 'blue':
@@ -68,4 +73,5 @@ class ShellingSegregation:
 
 
 if __name__ == '__main__':
-    test = ShellingSegregation(50,15,10,10)
+    test = ShellingSegregation(50, 15, .5, 8, 10, 10)
+    test.single_step(test.red[0]//10, test.red[0]%10)
