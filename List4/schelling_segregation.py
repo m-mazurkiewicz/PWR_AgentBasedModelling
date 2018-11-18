@@ -1,6 +1,7 @@
 from List4.agent import Agent
 import matplotlib.pyplot as plt
-from copy import copy
+from copy import deepcopy as copy
+import numpy as np
 
 
 class Grid:
@@ -30,7 +31,7 @@ class Grid:
         count = 1
         # ==  Loop until none wishes to move == #
         if plot_n_print:
-            plot_distribution(self.agents, count)
+            self.plot_distribution(self.agents, count)
         while True and count < max_number_of_iterations:
             self.history.append(copy(self.agents))
             if plot_n_print:
@@ -47,7 +48,7 @@ class Grid:
                 break
         self.history.append(copy(self.agents))
         if plot_n_print:
-            plot_distribution(self.agents, count)
+            self.plot_distribution(self.agents, count)
             print('Converged, terminating.')
 
     def calculate_similar_neighbour_index(self):
@@ -56,27 +57,46 @@ class Grid:
             similar_neighbour_index += agent.fraction_of_neighbours_of_the_same_type(self.agents)
         return similar_neighbour_index / len(self.agents)
 
+    def plot(self):
+        length_of_simulation = len(self.history)
+        plt.figure(figsize=(12,8), dpi = 300)
+        plt.subplot(231)
+        self.plot_distribution(self.history[0], 1)
+        plt.subplot(232)
+        self.plot_distribution(self.history[int(np.floor(length_of_simulation/5))], int(np.floor(length_of_simulation/5))+1)
+        plt.subplot(233)
+        self.plot_distribution(self.history[2*int(np.floor(length_of_simulation/5))], 2*int(np.floor(length_of_simulation/5))+1)
+        plt.subplot(234)
+        self.plot_distribution(self.history[3*int(np.floor(length_of_simulation/5))], 3*int(np.floor(length_of_simulation/5))+1)
+        plt.subplot(235)
+        self.plot_distribution(self.history[4*int(np.floor(length_of_simulation/5))], 4*int(np.floor(length_of_simulation/5))+1)
+        plt.subplot(236)
+        self.plot_distribution(self.history[length_of_simulation-1], length_of_simulation)
+        plt.show()
+        plt.close()
 
-def plot_distribution(agents, cycle_num):
-    "Plot the distribution of agents after cycle_num rounds of the loop."
-    x_values_0, y_values_0 = [], []
-    x_values_1, y_values_1 = [], []
-    # == Obtain locations of each type == #
-    for agent in agents:
-        x, y = agent.location
-        if agent.type == 0:
-            x_values_0.append(x)
-            y_values_0.append(y)
-        else:
-            x_values_1.append(x)
-            y_values_1.append(y)
-    fig, ax = plt.subplots(figsize=(8, 8))
-    plot_args = {'markersize': 8, 'alpha': 0.6}
-    ax.set_facecolor('azure')
-    ax.plot(x_values_0, y_values_0, 'o', markerfacecolor='orange',  **plot_args)
-    ax.plot(x_values_1, y_values_1, 'o', markerfacecolor='green', **plot_args)
-    ax.set_title(f'Cycle {cycle_num-1}')
-    plt.show()
+    def plot_distribution(self, agents, cycle_num):
+        "Plot the distribution of agents after cycle_num rounds of the loop."
+        x_values_0, y_values_0 = [], []
+        x_values_1, y_values_1 = [], []
+        # == Obtain locations of each type == #
+        for agent in agents:
+            x, y = agent.location
+            if agent.type == 0:
+                x_values_0.append(x)
+                y_values_0.append(y)
+            else:
+                x_values_1.append(x)
+                y_values_1.append(y)
+        # fig, ax = plt.subplots(figsize=(8, 8))
+        plot_args = {'markersize': 6, 'alpha': 0.6}
+        # plt.facecolor('azure')
+        plt.plot(x_values_0, y_values_0, 'o', markerfacecolor='orange',  **plot_args)
+        plt.plot(x_values_1, y_values_1, 'o', markerfacecolor='green', **plot_args)
+        plt.xlim(-0.5, self.num_of_columns+0.5)
+        plt.ylim(-0.5, self.num_of_rows+0.5)
+        plt.title(f'Cycle {cycle_num-1}')
+        # plt.show()
 
 
 if __name__ == '__main__':
@@ -89,5 +109,6 @@ if __name__ == '__main__':
     max_number_of_iterations = 100
 
     grid = Grid(num_of_type_0, num_of_type_1, num_neighbors_0, num_neighbors_1, staying_threshold_0, staying_threshold_1)
-    grid.run_algorithm(max_number_of_iterations, plot_n_print=True)
+    grid.run_algorithm(max_number_of_iterations, plot_n_print=False)
     print(grid.calculate_similar_neighbour_index())
+    grid.plot()
