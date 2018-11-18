@@ -13,13 +13,16 @@ class Grid:
         self.require_same_type_type_1 = require_same_type_type_1
         self.num_of_rows = num_of_rows
         self.num_of_columns = num_of_columns
-        self.empty_spots = []
-        for i in range(self.num_of_rows):
-            for j in range(self.num_of_columns):
-                self.empty_spots.append((i, j))
+        self.empty_spots = self.create_lies_of_empty_spots(self.num_of_rows, self.num_of_columns)
         self.agents = [Agent(0, self.num_neighbors_type_0, self.require_same_type_type_0, self.empty_spots) for i in range(self.num_of_type_0)]
         self.agents.extend(Agent(1, self.num_neighbors_type_1, self.require_same_type_type_1, self.empty_spots) for i in range(self.num_of_type_1))
 
+    def create_lies_of_empty_spots(self, num_of_rows, num_of_columns):
+        empty_spots = []
+        for i in range(num_of_rows):
+            for j in range(num_of_columns):
+                empty_spots.append((i, j))
+        return empty_spots
 
 def plot_distribution(agents, cycle_num):
     "Plot the distribution of agents after cycle_num rounds of the loop."
