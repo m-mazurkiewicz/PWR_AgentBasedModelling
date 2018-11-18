@@ -49,10 +49,12 @@ if __name__ == '__main__':
     grid = Grid(num_of_type_0, num_of_type_1, num_neighbors, require_same_type)
 
     count = 1
+    max_number_of_iterations = 100
     # ==  Loop until none wishes to move == #
-    while True:
+    plot_distribution(grid.agents, count)
+    while True and count < max_number_of_iterations:
         print('Entering loop ', count)
-        plot_distribution(grid.agents, count)
+        #plot_distribution(grid.agents, count)
         count += 1
         no_one_moved = True
         for agent in grid.agents:
@@ -62,5 +64,5 @@ if __name__ == '__main__':
                 no_one_moved = False
         if no_one_moved:
             break
-
+    plot_distribution(grid.agents, count)
     print('Converged, terminating.')
