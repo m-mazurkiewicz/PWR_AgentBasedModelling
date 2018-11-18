@@ -1,5 +1,6 @@
 from List4.agent import Agent
 import matplotlib.pyplot as plt
+from copy import copy
 
 
 class Grid:
@@ -16,6 +17,7 @@ class Grid:
         self.empty_spots = self.create_table_of_empty_spots(self.num_of_rows, self.num_of_columns)
         self.agents = [Agent(0, self.num_neighbors_type_0, self.staying_threshold_0, self.empty_spots) for i in range(self.num_of_type_0)]
         self.agents.extend(Agent(1, self.num_neighbors_type_1, self.staying_threshold_1, self.empty_spots) for i in range(self.num_of_type_1))
+        self.history = []
 
     def create_table_of_empty_spots(self, num_of_rows, num_of_columns):
         empty_spots = []
@@ -29,6 +31,7 @@ class Grid:
         # ==  Loop until none wishes to move == #
         plot_distribution(self.agents, count)
         while True and count < max_number_of_iterations:
+            self.history.append(copy(self.agents))
             print('Entering loop ', count)
             # plot_distribution(grid.agents, count)
             count += 1
@@ -40,6 +43,7 @@ class Grid:
                     no_one_moved = False
             if no_one_moved:
                 break
+        self.history.append(copy(self.agents))
         plot_distribution(self.agents, count)
         print('Converged, terminating.')
 
