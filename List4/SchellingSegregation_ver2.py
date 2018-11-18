@@ -2,6 +2,16 @@ from List4.Agent import Agent
 import matplotlib.pyplot as plt
 
 
+class Grid:
+    def __init__(self, num_of_type_0=250, num_of_type_1=250, num_neighbors=10, require_same_type=5):
+        self.num_of_type_0 = num_of_type_0
+        self.num_of_type_1 = num_of_type_1
+        self.num_neighbors = num_neighbors
+        self.require_same_type = require_same_type
+        self.agents = [Agent(0, num_neighbors, require_same_type) for i in range(num_of_type_0)]
+        self.agents.extend(Agent(1, num_neighbors, require_same_type) for i in range(num_of_type_1))
+
+
 def plot_distribution(agents, cycle_num):
     "Plot the distribution of agents after cycle_num rounds of the loop."
     x_values_0, y_values_0 = [], []
@@ -31,19 +41,21 @@ if __name__ == '__main__':
     require_same_type = 5   # Want at least this many neighbors to be same type
 
     # == Create a list of agents == #
-    agents = [Agent(0, num_neighbors, require_same_type) for i in range(num_of_type_0)]
-    agents.extend(Agent(1, num_neighbors, require_same_type) for i in range(num_of_type_1))
+    # agents = [Agent(0, num_neighbors, require_same_type) for i in range(num_of_type_0)]
+    # agents.extend(Agent(1, num_neighbors, require_same_type) for i in range(num_of_type_1))
+
+    grid = Grid(num_of_type_0, num_of_type_1, num_neighbors, require_same_type)
 
     count = 1
     # ==  Loop until none wishes to move == #
     while True:
         print('Entering loop ', count)
-        plot_distribution(agents, count)
+        plot_distribution(grid.agents, count)
         count += 1
         no_one_moved = True
-        for agent in agents:
+        for agent in grid.agents:
             old_location = agent.location
-            agent.update(agents)
+            agent.update(grid.agents)
             if agent.location != old_location:
                 no_one_moved = False
         if no_one_moved:
