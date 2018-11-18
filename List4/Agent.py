@@ -47,5 +47,6 @@ class Agent:
     def update(self, agents):
         "If not happy, then randomly choose new locations until happy."
         #while not self.happy(agents):
-        self.empty_spots.append(self.location)
-        self.draw_location()
+        if not self.happy(agents):
+            self.empty_spots.append(self.location)
+            self.draw_location()
