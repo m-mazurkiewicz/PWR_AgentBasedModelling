@@ -26,13 +26,15 @@ class Grid:
                 empty_spots.append((i, j))
         return empty_spots
 
-    def run_algorithm(self, max_number_of_iterations=100):
+    def run_algorithm(self, max_number_of_iterations=100, plot_n_print = False):
         count = 1
         # ==  Loop until none wishes to move == #
-        plot_distribution(self.agents, count)
+        if plot_n_print:
+            plot_distribution(self.agents, count)
         while True and count < max_number_of_iterations:
             self.history.append(copy(self.agents))
-            print('Entering loop ', count)
+            if plot_n_print:
+                print('Entering loop ', count)
             # plot_distribution(grid.agents, count)
             count += 1
             no_one_moved = True
@@ -44,8 +46,9 @@ class Grid:
             if no_one_moved:
                 break
         self.history.append(copy(self.agents))
-        plot_distribution(self.agents, count)
-        print('Converged, terminating.')
+        if plot_n_print:
+            plot_distribution(self.agents, count)
+            print('Converged, terminating.')
 
     def calculate_similar_neighbour_index(self):
         similar_neighbour_index = 0
@@ -86,5 +89,5 @@ if __name__ == '__main__':
     max_number_of_iterations = 100
 
     grid = Grid(num_of_type_0, num_of_type_1, num_neighbors_0, num_neighbors_1, staying_threshold_0, staying_threshold_1)
-    grid.run_algorithm(max_number_of_iterations)
+    grid.run_algorithm(max_number_of_iterations, plot_n_print=True)
     print(grid.calculate_similar_neighbour_index())
