@@ -1,4 +1,8 @@
-from List4.agent import Agent
+# from List4.agent import Agent
+import sys
+from os.path import dirname
+sys.path.append(dirname(__file__))
+from agent import Agent
 import matplotlib.pyplot as plt
 from copy import deepcopy as copy
 import numpy as np
