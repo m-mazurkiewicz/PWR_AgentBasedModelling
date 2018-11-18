@@ -77,22 +77,14 @@ class Grid:
 
     def plot_distribution(self, agents, cycle_num):
         "Plot the distribution of agents after cycle_num rounds of the loop."
-        x_values_0, y_values_0 = [], []
-        x_values_1, y_values_1 = [], []
         # == Obtain locations of each type == #
-        for agent in agents:
-            x, y = agent.location
-            if agent.type == 0:
-                x_values_0.append(x)
-                y_values_0.append(y)
-            else:
-                x_values_1.append(x)
-                y_values_1.append(y)
+        agents_0 = [agent.location for agent in agents if agent.type == 0]
+        agents_1 = [agent.location for agent in agents if agent.type == 1]
         # fig, ax = plt.subplots(figsize=(8, 8))
         plot_args = {'markersize': 6, 'alpha': 0.6}
         # plt.facecolor('azure')
-        plt.plot(x_values_0, y_values_0, 'o', markerfacecolor='orange',  **plot_args)
-        plt.plot(x_values_1, y_values_1, 'o', markerfacecolor='green', **plot_args)
+        plt.plot(*zip(*agents_0), 'o', markerfacecolor='orange',  **plot_args)
+        plt.plot(*zip(*agents_1), 'o', markerfacecolor='green', **plot_args)
         plt.xlim(-0.5, self.num_of_columns+0.5)
         plt.ylim(-0.5, self.num_of_rows+0.5)
         plt.title(f'Cycle {cycle_num-1}')
