@@ -24,6 +24,26 @@ class Grid:
                 empty_spots.append((i, j))
         return empty_spots
 
+    def run_algorithm(self, max_number_of_iterations=100):
+        count = 1
+        # ==  Loop until none wishes to move == #
+        plot_distribution(self.agents, count)
+        while True and count < max_number_of_iterations:
+            print('Entering loop ', count)
+            # plot_distribution(grid.agents, count)
+            count += 1
+            no_one_moved = True
+            for agent in self.agents:
+                old_location = agent.location
+                agent.update(self.agents)
+                if agent.location != old_location:
+                    no_one_moved = False
+            if no_one_moved:
+                break
+        plot_distribution(self.agents, count)
+        print('Converged, terminating.')
+
+
 def plot_distribution(agents, cycle_num):
     "Plot the distribution of agents after cycle_num rounds of the loop."
     x_values_0, y_values_0 = [], []
@@ -49,26 +69,11 @@ def plot_distribution(agents, cycle_num):
 if __name__ == '__main__':
     num_of_type_0 = 250
     num_of_type_1 = 250
-    num_neighbors = 10      # Number of agents regarded as neighbors
-    require_same_type = 5   # Want at least this many neighbors to be same type
-
-    grid = Grid(num_of_type_0, num_of_type_1, num_neighbors, require_same_type)
-
-    count = 1
+    num_neighbors_0 = 10
+    num_neighbors_1 = 15
+    require_same_type_0 = 5
+    require_same_type_1 = 10
     max_number_of_iterations = 100
-    # ==  Loop until none wishes to move == #
-    plot_distribution(grid.agents, count)
-    while True and count < max_number_of_iterations:
-        print('Entering loop ', count)
-        #plot_distribution(grid.agents, count)
-        count += 1
-        no_one_moved = True
-        for agent in grid.agents:
-            old_location = agent.location
-            agent.update(grid.agents)
-            if agent.location != old_location:
-                no_one_moved = False
-        if no_one_moved:
-            break
-    plot_distribution(grid.agents, count)
-    print('Converged, terminating.')
+
+    grid = Grid(num_of_type_0, num_of_type_1, num_neighbors_0, num_neighbors_1, require_same_type_0, require_same_type_1)
+    grid.run_algorithm(max_number_of_iterations)
