@@ -96,6 +96,7 @@ class Grid:
         plt.xlim(-0.5, self.num_of_columns+0.5)
         plt.ylim(-0.5, self.num_of_rows+0.5)
         plt.title(f'Cycle {cycle_num-1}')
+        plt.axis('off')
         # plt.show()
 
 
