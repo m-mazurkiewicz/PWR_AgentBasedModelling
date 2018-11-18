@@ -3,19 +3,22 @@ import matplotlib.pyplot as plt
 
 
 class Grid:
-    def __init__(self, num_of_type_0=250, num_of_type_1=250, num_neighbors=10, require_same_type=5, num_of_rows=100, num_of_columns=100):
+    def __init__(self, num_of_type_0=250, num_of_type_1=250, num_neighbors_type_0=10, num_neighbors_type_1=10,
+                 require_same_type_type_0=5, require_same_type_type_1=5, num_of_rows=100, num_of_columns=100):
         self.num_of_type_0 = num_of_type_0
         self.num_of_type_1 = num_of_type_1
-        self.num_neighbors = num_neighbors
-        self.require_same_type = require_same_type
+        self.num_neighbors_type_0 = num_neighbors_type_0
+        self.num_neighbors_type_1 = num_neighbors_type_1
+        self.require_same_type_type_0 = require_same_type_type_0
+        self.require_same_type_type_1 = require_same_type_type_1
         self.num_of_rows = num_of_rows
         self.num_of_columns = num_of_columns
         self.empty_spots = []
         for i in range(self.num_of_rows):
             for j in range(self.num_of_columns):
                 self.empty_spots.append((i, j))
-        self.agents = [Agent(0, num_neighbors, require_same_type, self.empty_spots) for i in range(num_of_type_0)]
-        self.agents.extend(Agent(1, num_neighbors, require_same_type, self.empty_spots) for i in range(num_of_type_1))
+        self.agents = [Agent(0, self.num_neighbors_type_0, self.require_same_type_type_0, self.empty_spots) for i in range(self.num_of_type_0)]
+        self.agents.extend(Agent(1, self.num_neighbors_type_1, self.require_same_type_type_1, self.empty_spots) for i in range(self.num_of_type_1))
 
 
 def plot_distribution(agents, cycle_num):
