@@ -1,4 +1,4 @@
-from List4.Agent import Agent
+from List4.agent import Agent
 import matplotlib.pyplot as plt
 
 
