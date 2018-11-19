@@ -54,10 +54,21 @@ class Agent:
             self.draw_location()
 
 
-# class AgentPeriodic(Agent):
-#
-#     def get_distance(self, other):
-#         "Computes euclidean distance between self and other agent."
-#         a = (self.location[0] - other.location[0])**2
-#         b = (self.location[1] - other.location[1])**2
-#         return sqrt(a + b)
+class AgentPeriodic(Agent):
+
+    def get_distance(self, other):
+        "Computes euclidean distance between self and other agent."
+        distance = set()
+        a = (self.location[0] - other.location[0])**2
+        b = (self.location[1] - other.location[1])**2
+        distance.add(sqrt(a+b))
+        a = (self.location[0] + (self.num_of_columns - other.location[0]))**2
+        b = (self.location[1] - other.location[1])**2
+        distance.add(sqrt(a+b))
+        a = (self.location[0] - other.location[0])**2
+        b = (self.location[1] + (self.num_of_columns - other.location[1]))**2
+        distance.add(sqrt(a+b))
+        a = (self.location[0] + (self.num_of_columns - other.location[0]))**2
+        b = (self.location[1] + (self.num_of_columns - other.location[1]))**2
+        distance.add(sqrt(a+b))
+        return min(distance)
