@@ -14,6 +14,7 @@ class Grid:
 
     def __init__(self, num_of_type_0=250, num_of_type_1=250, num_neighbors_type_0=10, num_neighbors_type_1=10,
                  staying_threshold_0=.5, staying_threshold_1=.5, num_of_rows=100, num_of_columns=100):
+        self.iteration_counter = 0
         self.num_of_type_0 = num_of_type_0
         self.num_of_type_1 = num_of_type_1
         self.num_neighbors_type_0 = num_neighbors_type_0
@@ -37,16 +38,15 @@ class Grid:
         return empty_spots
 
     def run_algorithm(self, max_number_of_iterations=100, plot_n_print = False):
-        count = 1
         # ==  Loop until none wishes to move == #
         if plot_n_print:
-            self.plot_distribution(self.agents, count)
-        while True and count < max_number_of_iterations:
+            self.plot_distribution(self.agents, self.iteration_counter)
+        while True and self.iteration_counter < max_number_of_iterations:
             self.history.append(copy(self.agents))
             if plot_n_print:
-                print('Entering loop ', count)
+                print('Entering loop ', self.iteration_counter)
             # plot_distribution(grid.agents, count)
-            count += 1
+            self.iteration_counter += 1
             no_one_moved = True
             for agent in self.agents:
                 old_location = agent.location
@@ -57,7 +57,7 @@ class Grid:
                 break
         self.history.append(copy(self.agents))
         if plot_n_print:
-            self.plot_distribution(self.agents, count)
+            self.plot_distribution(self.agents, self.iteration_counter)
             print('Converged, terminating.')
 
     def calculate_similar_neighbour_index(self, agents_list = None):
@@ -72,7 +72,7 @@ class Grid:
             return similar_neighbour_index / len(self.agents)
 
     def plot(self, file_name = None):
-        length_of_simulation = len(self.history)
+        length_of_simulation = self.iteration_counter+1#len(self.history)
         fig = plt.figure(figsize=(12,8), dpi = 300)
         fig.suptitle(
             f'Blue - ({self.num_of_type_0}; {self.num_neighbors_type_0}; {round(self.staying_threshold_0,2)}) Red - ({self.num_of_type_1}; {self.num_neighbors_type_1}; {round(self.staying_threshold_1,2)}) {self.num_of_rows}x{self.num_of_columns} grid', y=.03, fontsize=14)
