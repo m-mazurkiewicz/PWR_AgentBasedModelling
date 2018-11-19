@@ -55,17 +55,22 @@ class Grid:
             self.plot_distribution(self.agents, count)
             print('Converged, terminating.')
 
-    def calculate_similar_neighbour_index(self):
+    def calculate_similar_neighbour_index(self, agents_list = None):
         similar_neighbour_index = 0
-        for agent in self.agents:
-            similar_neighbour_index += agent.fraction_of_neighbours_of_the_same_type(self.agents)
-        return similar_neighbour_index / len(self.agents)
+        if agents_list:
+            for agent in agents_list:
+                similar_neighbour_index += agent.fraction_of_neighbours_of_the_same_type(agents_list)
+            return similar_neighbour_index / len(agents_list)
+        else:
+            for agent in self.agents:
+                similar_neighbour_index += agent.fraction_of_neighbours_of_the_same_type(self.agents)
+            return similar_neighbour_index / len(self.agents)
 
     def plot(self, file_name = None):
         length_of_simulation = len(self.history)
         fig = plt.figure(figsize=(12,8), dpi = 300)
         fig.suptitle(
-            f'Blue - ({self.num_of_type_0}; {self.num_neighbors_type_0}; {self.staying_threshold_0}) Red - ({self.num_of_type_1}; {self.num_neighbors_type_1}; {self.staying_threshold_1}) {self.num_of_rows}x{self.num_of_columns} grid', y=.03, fontsize=14)
+            f'Blue - ({self.num_of_type_0}; {self.num_neighbors_type_0}; {round(self.staying_threshold_0,2)}) Red - ({self.num_of_type_1}; {self.num_neighbors_type_1}; {round(self.staying_threshold_1,2)}) {self.num_of_rows}x{self.num_of_columns} grid', y=.03, fontsize=14)
         plt.subplot(231)
         self.plot_distribution(self.history[0], 1)
         plt.subplot(232)
@@ -84,6 +89,12 @@ class Grid:
             plt.show()
         plt.close(fig)
 
+    def save_agents_to_file(self, file_name):
+        with open(file_name+'.csv', 'w', encoding='UTF-8') as f:
+            f.write('x,y,type\n')
+            for agent in self.agents:
+                f.write(str(agent.location[0])+','+str(agent.location[1])+','+str(agent.type)+'\n')
+
     def plot_distribution(self, agents, cycle_num):
         "Plot the distribution of agents after cycle_num rounds of the loop."
         # == Obtain locations of each type == #
@@ -96,7 +107,8 @@ class Grid:
         plt.plot(*zip(*agents_1), 'o', markerfacecolor='red', **plot_args)
         plt.xlim(-0.5, self.num_of_columns+0.5)
         plt.ylim(-0.5, self.num_of_rows+0.5)
-        plt.title(f'Cycle {cycle_num-1}')
+        # plt.title(f'Cycle {cycle_num-1}, {self.calculate_similar_neighbour_index(agents)}')
+        plt.title('Cycle {0:.0f}, {1:.4f}'.format(cycle_num-1,self.calculate_similar_neighbour_index(agents)))
         plt.axis('off')
         # plt.show()
 

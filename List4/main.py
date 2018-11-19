@@ -18,3 +18,4 @@ grid = Grid(num_of_type_0, num_of_type_1, num_neighbors_0, num_neighbors_1, stay
 grid.run_algorithm(max_number_of_iterations, plot_n_print=False)
 os.makedirs('figures', exist_ok=True)
 grid.plot('figures/'+file_name)
+grid.save_agents_to_file('figures/'+file_name)
