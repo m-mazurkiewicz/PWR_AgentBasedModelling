@@ -19,17 +19,17 @@ class Grid:
         self.staying_threshold_1 = staying_threshold_1
         self.num_of_rows = num_of_rows
         self.num_of_columns = num_of_columns
-        self.empty_spots = self.create_table_of_empty_spots(self.num_of_rows, self.num_of_columns)
+        self.empty_spots = self.create_table_of_empty_spots()
         Agent.num_of_rows = self.num_of_rows
         Agent.num_of_columns = self.num_of_columns
         self.agents = [Agent(0, self.num_neighbors_type_0, self.staying_threshold_0, self.empty_spots) for i in range(self.num_of_type_0)]
         self.agents.extend(Agent(1, self.num_neighbors_type_1, self.staying_threshold_1, self.empty_spots) for i in range(self.num_of_type_1))
         self.history = []
 
-    def create_table_of_empty_spots(self, num_of_rows, num_of_columns):
+    def create_table_of_empty_spots(self):
         empty_spots = []
-        for i in range(num_of_rows):
-            for j in range(num_of_columns):
+        for i in range(self.num_of_rows):
+            for j in range(self.num_of_columns):
                 empty_spots.append((i, j))
         return empty_spots
 
