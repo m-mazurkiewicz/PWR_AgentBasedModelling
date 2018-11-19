@@ -1,5 +1,6 @@
 # from List4.agent import Agent
 import sys
+import os
 from os.path import dirname
 sys.path.append(dirname(__file__))
 from agent import Agent, AgentPeriodic
@@ -158,7 +159,9 @@ def to_do_3(file_name, mc_simulations = 1000, left_limit = 250, right_limit = 40
     plt.errorbar(population_range, np.apply_along_axis(np.mean, 1, results_array), yerr=np.apply_along_axis(np.std, 1, results_array))
     plt.xlabel('Size of populations')
     plt.ylabel('Number of iterations')
-    plt.show()
+    plt.title('Average number of iterations for {0} Monte Carlo simulations'.format(mc_simulations))
+    os.makedirs('figures', exist_ok=True)
+    plt.savefig('figures/{0}_{1}.png'.format(file_name, mc_simulations), dpi=300)
 
 
 
@@ -179,4 +182,4 @@ if __name__ == '__main__':
     # print(grid.calculate_similar_neighbour_index())
     # grid.plot()
 
-    to_do_3(file_name='',mc_simulations=3, left_limit=10, right_limit=20)
+    to_do_3(file_name='average_num_iterations')
