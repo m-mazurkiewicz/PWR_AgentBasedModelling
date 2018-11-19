@@ -1,7 +1,7 @@
 from random import seed, randint
 from math import sqrt
 
-seed(10)  # for reproducible random numbers
+# seed(10)  # for reproducible random numbers
 
 
 class Agent:
