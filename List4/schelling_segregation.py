@@ -146,7 +146,7 @@ class GridPeriodic(Grid):
 
 def to_do_3(file_name, mc_simulations = 10, left_limit = 250, right_limit = 4000):
     results = []
-    population_range = np.arange(left_limit, right_limit)
+    population_range = np.arange(left_limit, right_limit+10, 10)
     for population in tqdm(population_range):
         single_mc_results = []
         for _ in range(mc_simulations):
@@ -221,6 +221,6 @@ if __name__ == '__main__':
     # print(grid.calculate_similar_neighbour_index())
     # grid.plot()
 
-    # to_do_3(file_name='average_number_iterations')
+    to_do_3(file_name='average_number_iterations')
     # to_do_4(file_name='average_segregation_index')
-    to_do_5(file_name='average_segregation_index_m')
+    # to_do_5(file_name='average_segregation_index_m', mc_simulations=100)
