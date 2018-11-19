@@ -187,7 +187,7 @@ def to_do_4(file_name, mc_simulations = 10, num_steps = 50):
 
 def to_do_5(file_name, mc_simulations = 10):
     results = []
-    m_range = (np.hstack((0,np.cumsum(np.arange(2,6))))+np.ones(5))*8
+    m_range = (np.hstack((0,np.cumsum(np.arange(2,6))))+np.ones(5, dtype=int))*8
     for m in tqdm(m_range):
         single_mc_results = []
         for _ in range(mc_simulations):
