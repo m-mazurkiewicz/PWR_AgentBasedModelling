@@ -6,13 +6,14 @@ from agent import Agent, AgentPeriodic
 import matplotlib.pyplot as plt
 from copy import deepcopy as copy
 import numpy as np
+from tqdm import tqdm, trange
 
 
 class Grid:
 
     agent = Agent
 
-    def __init__(self, num_of_type_0=250, num_of_type_1=250, num_neighbors_type_0=10, num_neighbors_type_1=10,
+    def __init__(self, num_of_type_0=250, num_of_type_1=250, num_neighbors_type_0=8, num_neighbors_type_1=8,
                  staying_threshold_0=.5, staying_threshold_1=.5, num_of_rows=100, num_of_columns=100):
         self.iteration_counter = 0
         self.num_of_type_0 = num_of_type_0
@@ -37,7 +38,7 @@ class Grid:
                 empty_spots.append((i, j))
         return empty_spots
 
-    def run_algorithm(self, max_number_of_iterations=100, plot_n_print = False):
+    def run_algorithm(self, max_number_of_iterations=10000, plot_n_print = False):
         # ==  Loop until none wishes to move == #
         if plot_n_print:
             self.plot_distribution(self.agents, self.iteration_counter)
@@ -141,19 +142,41 @@ class GridPeriodic(Grid):
             plt.show()
         plt.close(fig)
 
-if __name__ == '__main__':
-    num_of_type_0 = 250
-    num_of_type_1 = 250
-    num_neighbors_0 = 10
-    num_neighbors_1 = 15
-    staying_threshold_0 = .5
-    staying_threshold_1 = 2 / 3
-    max_number_of_iterations = 100
-    number_of_rows = 100
-    number_of_columns = 100
 
-    grid = Grid(num_of_type_0, num_of_type_1, num_neighbors_0, num_neighbors_1, staying_threshold_0, staying_threshold_1, number_of_rows, number_of_columns)
-    # grid = GridPeriodic(num_of_type_0, num_of_type_1, num_neighbors_0, num_neighbors_1, staying_threshold_0, staying_threshold_1, number_of_rows, number_of_columns)
-    grid.run_algorithm(max_number_of_iterations, plot_n_print=False)
-    print(grid.calculate_similar_neighbour_index())
-    grid.plot()
+def to_do_3(file_name, mc_simulations = 1000, left_limit = 250, right_limit = 4000):
+    results = []
+    population_range = np.arange(left_limit, right_limit)
+    for population in tqdm(population_range):
+        single_mc_results = []
+        for _ in range(mc_simulations):
+            g = GridPeriodic(num_of_type_0=population, num_of_type_1=population)
+            g.run_algorithm()
+            single_mc_results.append(g.iteration_counter)
+        results.append(single_mc_results)
+    # print(np.apply_along_axis(np.mean, 1, np.array(results)))
+    results_array = np.array(results)
+    plt.errorbar(population_range, np.apply_along_axis(np.mean, 1, results_array), yerr=np.apply_along_axis(np.std, 1, results_array))
+    plt.xlabel('Size of populations')
+    plt.ylabel('Number of iterations')
+    plt.show()
+
+
+
+if __name__ == '__main__':
+    # num_of_type_0 = 250
+    # num_of_type_1 = 250
+    # num_neighbors_0 = 10
+    # num_neighbors_1 = 15
+    # staying_threshold_0 = .5
+    # staying_threshold_1 = 2 / 3
+    # max_number_of_iterations = 100
+    # number_of_rows = 100
+    # number_of_columns = 100
+    #
+    # grid = Grid(num_of_type_0, num_of_type_1, num_neighbors_0, num_neighbors_1, staying_threshold_0, staying_threshold_1, number_of_rows, number_of_columns)
+    # # grid = GridPeriodic(num_of_type_0, num_of_type_1, num_neighbors_0, num_neighbors_1, staying_threshold_0, staying_threshold_1, number_of_rows, number_of_columns)
+    # grid.run_algorithm(max_number_of_iterations, plot_n_print=False)
+    # print(grid.calculate_similar_neighbour_index())
+    # grid.plot()
+
+    to_do_3(file_name='',mc_simulations=3, left_limit=10, right_limit=20)
