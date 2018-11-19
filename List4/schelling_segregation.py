@@ -2,13 +2,16 @@
 import sys
 from os.path import dirname
 sys.path.append(dirname(__file__))
-from agent import Agent
+from agent import Agent, AgentPeriodic
 import matplotlib.pyplot as plt
 from copy import deepcopy as copy
 import numpy as np
 
 
 class Grid:
+
+    agent = Agent
+
     def __init__(self, num_of_type_0=250, num_of_type_1=250, num_neighbors_type_0=10, num_neighbors_type_1=10,
                  staying_threshold_0=.5, staying_threshold_1=.5, num_of_rows=100, num_of_columns=100):
         self.num_of_type_0 = num_of_type_0
@@ -20,10 +23,10 @@ class Grid:
         self.num_of_rows = num_of_rows
         self.num_of_columns = num_of_columns
         self.empty_spots = self.create_table_of_empty_spots()
-        Agent.num_of_rows = self.num_of_rows
-        Agent.num_of_columns = self.num_of_columns
-        self.agents = [Agent(0, self.num_neighbors_type_0, self.staying_threshold_0, self.empty_spots) for i in range(self.num_of_type_0)]
-        self.agents.extend(Agent(1, self.num_neighbors_type_1, self.staying_threshold_1, self.empty_spots) for i in range(self.num_of_type_1))
+        self.agent.num_of_rows = self.num_of_rows
+        self.agent.num_of_columns = self.num_of_columns
+        self.agents = [self.agent(0, self.num_neighbors_type_0, self.staying_threshold_0, self.empty_spots) for i in range(self.num_of_type_0)]
+        self.agents.extend(self.agent(1, self.num_neighbors_type_1, self.staying_threshold_1, self.empty_spots) for i in range(self.num_of_type_1))
         self.history = []
 
     def create_table_of_empty_spots(self):
@@ -112,6 +115,32 @@ class Grid:
         plt.axis('off')
 
 
+class GridPeriodic(Grid):
+    agent = AgentPeriodic
+
+    def plot(self, file_name = None):
+        length_of_simulation = len(self.history)
+        fig = plt.figure(figsize=(12,8), dpi = 300)
+        fig.suptitle(
+            f'Blue - ({self.num_of_type_0}; {self.num_neighbors_type_0}; {round(self.staying_threshold_0,2)}) Red - ({self.num_of_type_1}; {self.num_neighbors_type_1}; {round(self.staying_threshold_1,2)}) {self.num_of_rows}x{self.num_of_columns} periodic grid', y=.03, fontsize=14)
+        plt.subplot(231)
+        self.plot_distribution(self.history[0], 1)
+        plt.subplot(232)
+        self.plot_distribution(self.history[int(np.floor(length_of_simulation/5))], int(np.floor(length_of_simulation/5))+1)
+        plt.subplot(233)
+        self.plot_distribution(self.history[2*int(np.floor(length_of_simulation/5))], 2*int(np.floor(length_of_simulation/5))+1)
+        plt.subplot(234)
+        self.plot_distribution(self.history[3*int(np.floor(length_of_simulation/5))], 3*int(np.floor(length_of_simulation/5))+1)
+        plt.subplot(235)
+        self.plot_distribution(self.history[4*int(np.floor(length_of_simulation/5))], 4*int(np.floor(length_of_simulation/5))+1)
+        plt.subplot(236)
+        self.plot_distribution(self.history[length_of_simulation-1], length_of_simulation)
+        if file_name:
+            plt.savefig(file_name+'.png')
+        else:
+            plt.show()
+        plt.close(fig)
+
 if __name__ == '__main__':
     num_of_type_0 = 250
     num_of_type_1 = 250
@@ -124,6 +153,7 @@ if __name__ == '__main__':
     number_of_columns = 100
 
     grid = Grid(num_of_type_0, num_of_type_1, num_neighbors_0, num_neighbors_1, staying_threshold_0, staying_threshold_1, number_of_rows, number_of_columns)
+    # grid = GridPeriodic(num_of_type_0, num_of_type_1, num_neighbors_0, num_neighbors_1, staying_threshold_0, staying_threshold_1, number_of_rows, number_of_columns)
     grid.run_algorithm(max_number_of_iterations, plot_n_print=False)
     print(grid.calculate_similar_neighbour_index())
     grid.plot()
