@@ -72,22 +72,22 @@ class Grid:
             return similar_neighbour_index / len(self.agents)
 
     def plot(self, file_name = None):
-        length_of_simulation = self.iteration_counter+1#len(self.history)
+        length_of_simulation = self.iteration_counter#len(self.history)
         fig = plt.figure(figsize=(12,8), dpi = 300)
         fig.suptitle(
             f'Blue - ({self.num_of_type_0}; {self.num_neighbors_type_0}; {round(self.staying_threshold_0,2)}) Red - ({self.num_of_type_1}; {self.num_neighbors_type_1}; {round(self.staying_threshold_1,2)}) {self.num_of_rows}x{self.num_of_columns} grid', y=.03, fontsize=14)
         plt.subplot(231)
-        self.plot_distribution(self.history[0], 1)
+        self.plot_distribution(self.history[0], 0)
         plt.subplot(232)
-        self.plot_distribution(self.history[int(np.floor(length_of_simulation/5))], int(np.floor(length_of_simulation/5))+1)
+        self.plot_distribution(self.history[int(np.floor(length_of_simulation/5))], int(np.floor(length_of_simulation/5)))
         plt.subplot(233)
-        self.plot_distribution(self.history[2*int(np.floor(length_of_simulation/5))], 2*int(np.floor(length_of_simulation/5))+1)
+        self.plot_distribution(self.history[2*int(np.floor(length_of_simulation/5))], 2*int(np.floor(length_of_simulation/5)))
         plt.subplot(234)
-        self.plot_distribution(self.history[3*int(np.floor(length_of_simulation/5))], 3*int(np.floor(length_of_simulation/5))+1)
+        self.plot_distribution(self.history[3*int(np.floor(length_of_simulation/5))], 3*int(np.floor(length_of_simulation/5)))
         plt.subplot(235)
-        self.plot_distribution(self.history[4*int(np.floor(length_of_simulation/5))], 4*int(np.floor(length_of_simulation/5))+1)
+        self.plot_distribution(self.history[4*int(np.floor(length_of_simulation/5))], 4*int(np.floor(length_of_simulation/5)))
         plt.subplot(236)
-        self.plot_distribution(self.history[length_of_simulation-1], length_of_simulation)
+        self.plot_distribution(self.history[length_of_simulation], length_of_simulation-1)
         if file_name:
             plt.savefig(file_name+'.png')
         else:
@@ -111,7 +111,7 @@ class Grid:
         plt.plot(*zip(*agents_1), 'o', markerfacecolor='red', **plot_args)
         plt.xlim(-0.5, self.num_of_columns+0.5)
         plt.ylim(-0.5, self.num_of_rows+0.5)
-        plt.title('Cycle {0:.0f}, {1:.4f}'.format(cycle_num-1,self.calculate_similar_neighbour_index(agents)))
+        plt.title('Cycle {0:.0f}, {1:.4f}'.format(cycle_num,self.calculate_similar_neighbour_index(agents)))
         plt.axis('off')
 
 
