@@ -61,7 +61,7 @@ class Grid:
             similar_neighbour_index += agent.fraction_of_neighbours_of_the_same_type(self.agents)
         return similar_neighbour_index / len(self.agents)
 
-    def plot(self):
+    def plot(self, file_name = None):
         length_of_simulation = len(self.history)
         plt.figure(figsize=(12,8), dpi = 300)
         plt.subplot(231)
@@ -76,7 +76,10 @@ class Grid:
         self.plot_distribution(self.history[4*int(np.floor(length_of_simulation/5))], 4*int(np.floor(length_of_simulation/5))+1)
         plt.subplot(236)
         self.plot_distribution(self.history[length_of_simulation-1], length_of_simulation)
-        plt.show()
+        if file_name:
+            plt.savefig(file_name+'.png')
+        else:
+            plt.show()
         plt.close()
 
     def plot_distribution(self, agents, cycle_num):
