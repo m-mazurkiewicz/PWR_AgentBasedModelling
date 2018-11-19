@@ -39,7 +39,7 @@ class Grid:
                 empty_spots.append((i, j))
         return empty_spots
 
-    def run_algorithm(self, max_number_of_iterations=10000, plot_n_print = False):
+    def run_algorithm(self, max_number_of_iterations=100, plot_n_print = False):
         # ==  Loop until none wishes to move == #
         if plot_n_print:
             self.plot_distribution(self.agents, self.iteration_counter)
@@ -144,7 +144,7 @@ class GridPeriodic(Grid):
         plt.close(fig)
 
 
-def to_do_3(file_name, mc_simulations = 1000, left_limit = 250, right_limit = 4000):
+def to_do_3(file_name, mc_simulations = 10, left_limit = 250, right_limit = 4000):
     results = []
     population_range = np.arange(left_limit, right_limit)
     for population in tqdm(population_range):
@@ -163,6 +163,25 @@ def to_do_3(file_name, mc_simulations = 1000, left_limit = 250, right_limit = 40
     os.makedirs('figures', exist_ok=True)
     plt.savefig('figures/{0}_{1}.png'.format(file_name, mc_simulations), dpi=300)
 
+def to_do_4(file_name, mc_simulations = 10, num_steps = 50):
+    results = []
+    j_range = np.linspace(0.1, 0.9, num_steps, endpoint=True)
+    for j in tqdm(j_range):
+        single_mc_results = []
+        for _ in range(mc_simulations):
+            g = GridPeriodic(staying_threshold_0=j, staying_threshold_1=j)
+            g.run_algorithm()
+            single_mc_results.append(g.calculate_similar_neighbour_index())
+        results.append(single_mc_results)
+    # print(np.apply_along_axis(np.mean, 1, np.array(results)))
+    results_array = np.array(results)
+    plt.errorbar(j_range, np.apply_along_axis(np.mean, 1, results_array), yerr=np.apply_along_axis(np.std, 1, results_array))
+    plt.xlabel('Value of j_t')
+    plt.ylabel('Segregation index')
+    plt.title('Average segregation index for {0} Monte Carlo simulations'.format(mc_simulations))
+    os.makedirs('figures', exist_ok=True)
+    plt.savefig('figures/{0}_{1}.png'.format(file_name, mc_simulations), dpi=300)
+    # plt.show()
 
 
 if __name__ == '__main__':
@@ -182,4 +201,4 @@ if __name__ == '__main__':
     # print(grid.calculate_similar_neighbour_index())
     # grid.plot()
 
-    to_do_3(file_name='average_num_iterations')
+    to_do_4(file_name='average_segregation_index')
