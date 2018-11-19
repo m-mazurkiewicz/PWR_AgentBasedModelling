@@ -63,7 +63,9 @@ class Grid:
 
     def plot(self, file_name = None):
         length_of_simulation = len(self.history)
-        plt.figure(figsize=(12,8), dpi = 300)
+        fig = plt.figure(figsize=(12,8), dpi = 300)
+        fig.suptitle(
+            f'Blue - ({self.num_of_type_0}; {self.num_neighbors_type_0}; {self.staying_threshold_0}) Red - ({self.num_of_type_1}; {self.num_neighbors_type_1}; {self.staying_threshold_1}) {self.num_of_rows}x{self.num_of_columns} grid', y=.03, fontsize=14)
         plt.subplot(231)
         self.plot_distribution(self.history[0], 1)
         plt.subplot(232)
@@ -80,7 +82,7 @@ class Grid:
             plt.savefig(file_name+'.png')
         else:
             plt.show()
-        plt.close()
+        plt.close(fig)
 
     def plot_distribution(self, agents, cycle_num):
         "Plot the distribution of agents after cycle_num rounds of the loop."
@@ -90,8 +92,8 @@ class Grid:
         # fig, ax = plt.subplots(figsize=(8, 8))
         plot_args = {'markersize': 6, 'alpha': 0.6}
         # plt.facecolor('azure')
-        plt.plot(*zip(*agents_0), 'o', markerfacecolor='orange',  **plot_args)
-        plt.plot(*zip(*agents_1), 'o', markerfacecolor='green', **plot_args)
+        plt.plot(*zip(*agents_0), 'o', markerfacecolor='blue',  **plot_args)
+        plt.plot(*zip(*agents_1), 'o', markerfacecolor='red', **plot_args)
         plt.xlim(-0.5, self.num_of_columns+0.5)
         plt.ylim(-0.5, self.num_of_rows+0.5)
         plt.title(f'Cycle {cycle_num-1}')
