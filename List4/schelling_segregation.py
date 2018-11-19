@@ -20,6 +20,8 @@ class Grid:
         self.num_of_rows = num_of_rows
         self.num_of_columns = num_of_columns
         self.empty_spots = self.create_table_of_empty_spots(self.num_of_rows, self.num_of_columns)
+        Agent.num_of_rows = self.num_of_rows
+        Agent.num_of_columns = self.num_of_columns
         self.agents = [Agent(0, self.num_neighbors_type_0, self.staying_threshold_0, self.empty_spots) for i in range(self.num_of_type_0)]
         self.agents.extend(Agent(1, self.num_neighbors_type_1, self.staying_threshold_1, self.empty_spots) for i in range(self.num_of_type_1))
         self.history = []
@@ -100,17 +102,14 @@ class Grid:
         # == Obtain locations of each type == #
         agents_0 = [agent.location for agent in agents if agent.type == 0]
         agents_1 = [agent.location for agent in agents if agent.type == 1]
-        # fig, ax = plt.subplots(figsize=(8, 8))
         plot_args = {'markersize': 6, 'alpha': 0.6}
         # plt.facecolor('azure')
         plt.plot(*zip(*agents_0), 'o', markerfacecolor='blue',  **plot_args)
         plt.plot(*zip(*agents_1), 'o', markerfacecolor='red', **plot_args)
         plt.xlim(-0.5, self.num_of_columns+0.5)
         plt.ylim(-0.5, self.num_of_rows+0.5)
-        # plt.title(f'Cycle {cycle_num-1}, {self.calculate_similar_neighbour_index(agents)}')
         plt.title('Cycle {0:.0f}, {1:.4f}'.format(cycle_num-1,self.calculate_similar_neighbour_index(agents)))
         plt.axis('off')
-        # plt.show()
 
 
 if __name__ == '__main__':
@@ -121,8 +120,10 @@ if __name__ == '__main__':
     staying_threshold_0 = .5
     staying_threshold_1 = 2 / 3
     max_number_of_iterations = 100
+    number_of_rows = 100
+    number_of_columns = 100
 
-    grid = Grid(num_of_type_0, num_of_type_1, num_neighbors_0, num_neighbors_1, staying_threshold_0, staying_threshold_1)
+    grid = Grid(num_of_type_0, num_of_type_1, num_neighbors_0, num_neighbors_1, staying_threshold_0, staying_threshold_1, number_of_rows, number_of_columns)
     grid.run_algorithm(max_number_of_iterations, plot_n_print=False)
     print(grid.calculate_similar_neighbour_index())
     grid.plot()

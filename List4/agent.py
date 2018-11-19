@@ -6,6 +6,9 @@ from math import sqrt
 
 class Agent:
 
+    num_of_rows = None
+    num_of_columns = None
+
     def __init__(self, type, num_neighbors, staying_threshold, empty_spots):
         self.type = type
         self.num_neighbors = num_neighbors
@@ -14,9 +17,9 @@ class Agent:
         self.draw_location()
 
     def draw_location(self):
-        self.location = randint(0, 100), randint(0, 100)
+        self.location = randint(0, self.num_of_columns), randint(0, self.num_of_rows)
         while self.location not in self.empty_spots:
-            self.location = randint(0, 100), randint(0, 100)
+            self.location = randint(0, self.num_of_columns), randint(0, self.num_of_rows)
         self.empty_spots.remove(self.location)
 
     def get_distance(self, other):
@@ -49,3 +52,12 @@ class Agent:
         if self.fraction_of_neighbours_of_the_same_type(agents) < self.staying_threshold:
             self.empty_spots.append(self.location)
             self.draw_location()
+
+
+# class AgentPeriodic(Agent):
+#
+#     def get_distance(self, other):
+#         "Computes euclidean distance between self and other agent."
+#         a = (self.location[0] - other.location[0])**2
+#         b = (self.location[1] - other.location[1])**2
+#         return sqrt(a + b)
