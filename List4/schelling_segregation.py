@@ -163,6 +163,7 @@ def to_do_3(file_name, mc_simulations = 10, left_limit = 250, right_limit = 4000
     os.makedirs('figures', exist_ok=True)
     plt.savefig('figures/{0}_{1}.png'.format(file_name, mc_simulations), dpi=300)
 
+
 def to_do_4(file_name, mc_simulations = 10, num_steps = 50):
     results = []
     j_range = np.linspace(0.1, 0.9, num_steps, endpoint=True)
@@ -184,6 +185,25 @@ def to_do_4(file_name, mc_simulations = 10, num_steps = 50):
     # plt.show()
 
 
+def to_do_5(file_name, mc_simulations = 10):
+    results = []
+    m_range = (np.hstack((0,np.cumsum(np.arange(2,6))))+np.ones(5))*8
+    for m in tqdm(m_range):
+        single_mc_results = []
+        for _ in range(mc_simulations):
+            g = GridPeriodic(num_neighbors_type_0=m, num_neighbors_type_1=m)
+            g.run_algorithm()
+            single_mc_results.append(g.calculate_similar_neighbour_index())
+        results.append(single_mc_results)
+    results_array = np.array(results)
+    plt.errorbar(m_range, np.apply_along_axis(np.mean, 1, results_array), yerr=np.apply_along_axis(np.std, 1, results_array))
+    plt.xlabel('Value of m_t')
+    plt.ylabel('Segregation index')
+    plt.title('Average segregation index for {0} Monte Carlo simulations'.format(mc_simulations))
+    os.makedirs('figures', exist_ok=True)
+    plt.savefig('figures/{0}_{1}.png'.format(file_name, mc_simulations), dpi=300)
+
+
 if __name__ == '__main__':
     # num_of_type_0 = 250
     # num_of_type_1 = 250
@@ -201,4 +221,6 @@ if __name__ == '__main__':
     # print(grid.calculate_similar_neighbour_index())
     # grid.plot()
 
-    to_do_4(file_name='average_segregation_index')
+    # to_do_3(file_name='average_number_iterations')
+    # to_do_4(file_name='average_segregation_index')
+    to_do_5(file_name='average_segregation_index_m')
