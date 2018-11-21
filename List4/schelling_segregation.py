@@ -26,8 +26,9 @@ class Grid:
         self.num_of_rows = num_of_rows
         self.num_of_columns = num_of_columns
         self.empty_spots = self.create_table_of_empty_spots()
-        self.agent.num_of_rows = self.num_of_rows
-        self.agent.num_of_columns = self.num_of_columns
+        self.agent.grid_dimensions = (self.num_of_columns, self.num_of_rows)
+        # self.agent.num_of_rows = self.num_of_rows
+        # self.agent.num_of_columns = self.num_of_columns
         self.agents = [self.agent(0, self.num_neighbors_type_0, self.staying_threshold_0, self.empty_spots) for i in range(self.num_of_type_0)]
         self.agents.extend(self.agent(1, self.num_neighbors_type_1, self.staying_threshold_1, self.empty_spots) for i in range(self.num_of_type_1))
         self.history = []

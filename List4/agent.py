@@ -6,8 +6,7 @@ from math import sqrt
 
 class Agent:
 
-    num_of_rows = None
-    num_of_columns = None
+    grid_dimensions = None
 
     def __init__(self, type, num_neighbors, staying_threshold, empty_spots):
         self.type = type
@@ -17,9 +16,9 @@ class Agent:
         self.draw_location()
 
     def draw_location(self):
-        self.location = randint(0, self.num_of_columns), randint(0, self.num_of_rows)
+        self.location = randint(0, self.grid_dimensions[0]), randint(0, self.grid_dimensions[1])
         while self.location not in self.empty_spots:
-            self.location = randint(0, self.num_of_columns), randint(0, self.num_of_rows)
+            self.location = randint(0, self.grid_dimensions[0]), randint(0, self.grid_dimensions[1])
         self.empty_spots.remove(self.location)
 
     def get_distance(self, other):
@@ -58,17 +57,13 @@ class AgentPeriodic(Agent):
 
     def get_distance(self, other):
         "Computes euclidean distance between self and other agent."
-        distance = set()
-        a = (self.location[0] - other.location[0])**2
-        b = (self.location[1] - other.location[1])**2
-        distance.add(sqrt(a+b))
-        a = (self.location[0] + (self.num_of_columns - other.location[0]))**2
-        b = (self.location[1] - other.location[1])**2
-        distance.add(sqrt(a+b))
-        a = (self.location[0] - other.location[0])**2
-        b = (self.location[1] + (self.num_of_columns - other.location[1]))**2
-        distance.add(sqrt(a+b))
-        a = (self.location[0] + (self.num_of_columns - other.location[0]))**2
-        b = (self.location[1] + (self.num_of_columns - other.location[1]))**2
-        distance.add(sqrt(a+b))
-        return min(distance)
+        distance = 0
+        for dimension in [0,1]:
+            if self.location[dimension] <= other.location[dimension]:
+                x1 = self.location[dimension]
+                x2 = other.location[dimension]
+            else:
+                x1 = other.location[dimension]
+                x2 = self.location[dimension]
+            distance += min((x1 - x2)**2, (x1 + (self.grid_dimensions[dimension] - x2))**2)
+        return sqrt(distance)
