@@ -46,10 +46,23 @@ class Road:
         self._randomization()
         self._move_forward()
 
+    def _locations_of_cars(self, with_velocity=False):
+        if with_velocity:
+            return [(self.cells.index(car),car.speed) for car in self.cars]
+        else:
+            return [self.cells.index(car) for car in self.cars]
+
+    def _velocities_of_cars(self):
+        return [car.speed for car in self.cars]
+
+    def average_velocity(self):
+        return np.mean(self._velocities_of_cars())
+
 
 if __name__ == '__main__':
     r = Road(50, 0.4, 0.1)
-    print([(r.cells.index(car),car.speed) for car in r.cars])
+    print(r._locations_of_cars(True))
+    print(r.average_velocity())
     # r._acceleration()
     # print([(r.cells.index(car),car.speed) for car in r.cars])
     # r._slowing_down()
@@ -58,4 +71,5 @@ if __name__ == '__main__':
     # # print([(r.cells.index(car),car.speed) for car in r.cars])
     # r._move_forward()
     r.single_iteration()
-    print([(r.cells.index(car),car.speed) for car in r.cars])
+    print(r._locations_of_cars(True))
+    print(r.average_velocity())
