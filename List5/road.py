@@ -10,10 +10,9 @@ class Road:
         self.number_of_cars = math.ceil(self.number_of_cells * density_of_cars)
         self.p = slowing_down_probability
         self.max_speed = max_speed
-        self.cells = [0 for _ in range(self.number_of_cells)]
+        self.cells = [None for _ in range(self.number_of_cells)]
         self.cars = [Car(self.max_speed) for _ in range(self.number_of_cars)]
-        for key, location in enumerate(
-                np.random.choice(range(self.number_of_cells), self.number_of_cars, replace=False)):
+        for key, location in enumerate(np.random.choice(range(self.number_of_cells), self.number_of_cars, replace=False)):
             self.cells[location] = self.cars[key]
 
     def _acceleration(self):
@@ -22,9 +21,9 @@ class Road:
 
     def _slowing_down(self):
         for location, car in enumerate(self.cells):
-            if isinstance(car, Car):
+            if car is not None:
                 for i in range(1, car.speed + 1):
-                    if isinstance(self.cells[(location + i) % self.number_of_cells], Car):
+                    if self.cells[(location + i) % self.number_of_cells] is not None:
                         car.speed = i - 1
                         break
 
@@ -34,9 +33,9 @@ class Road:
             car.speed -= 1
 
     def _move_forward(self):
-        new_cells = [0 for _ in range(self.number_of_cells)]
+        new_cells = [None for _ in range(self.number_of_cells)]
         for location, car in enumerate(self.cells):
-            if isinstance(car, Car):
+            if car is not None:
                 new_cells[(location+car.speed) % self.number_of_cells] = car
         self.cells = new_cells
 
