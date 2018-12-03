@@ -16,11 +16,11 @@ class Road:
                 np.random.choice(range(self.number_of_cells), self.number_of_cars, replace=False)):
             self.cells[location] = self.cars[key]
 
-    def acceleration(self):
+    def _acceleration(self):
         for car in self.cars:
             car.speed = min(car.speed + 1, self.max_speed)
 
-    def slowing_down(self):
+    def _slowing_down(self):
         for location, car in enumerate(self.cells):
             if isinstance(car, Car):
                 for i in range(1, car.speed + 1):
@@ -28,15 +28,26 @@ class Road:
                         car.speed = i - 1
                         break
 
-    def randomization(self):
+    def _randomization(self):
         moving_cars = [car for car in self.cars if car.speed > 0]
-        for car in [moving_cars[i] for i in np.where(np.random.rand(len(moving_cars)) <= 1)[0]]:
+        for car in [moving_cars[i] for i in np.where(np.random.rand(len(moving_cars)) <= self.p)[0]]:
             car.speed -= 1
 
+    def _move_forward(self):
+        new_cells = [0 for _ in range(self.number_of_cells)]
+        for location, car in enumerate(self.cells):
+            if isinstance(car, Car):
+                new_cells[(location+car.speed) % self.number_of_cells] = car
+        self.cells = new_cells
 
 if __name__ == '__main__':
-    r = Road(5000, 0.4, 0.5)
-    # print([car.speed for car in r.cells if car!=0])
-    r.acceleration()
-    r.slowing_down()
-    r.randomization()
+    r = Road(50, 0.4, 0.2)
+    # print([(r.cells.index(car),car.speed) for car in r.cars])
+    r._acceleration()
+    print([(r.cells.index(car),car.speed) for car in r.cars])
+    r._slowing_down()
+    print([(r.cells.index(car),car.speed) for car in r.cars])
+    r._randomization()
+    # print([(r.cells.index(car),car.speed) for car in r.cars])
+    r._move_forward()
+    print([(r.cells.index(car),car.speed) for car in r.cars])
