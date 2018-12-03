@@ -58,18 +58,24 @@ class Road:
     def average_velocity(self):
         return np.mean(self._velocities_of_cars())
 
+    def simulate(self,number_of_iterations):
+        for _ in range(number_of_iterations):
+            self.single_iteration()
+            # print(self.average_velocity())
+
 
 if __name__ == '__main__':
-    r = Road(50, 0.4, 0.1)
-    print(r._locations_of_cars(True))
-    print(r.average_velocity())
-    # r._acceleration()
-    # print([(r.cells.index(car),car.speed) for car in r.cars])
-    # r._slowing_down()
-    # print([(r.cells.index(car),car.speed) for car in r.cars])
-    # r._randomization()
+    r = Road(50, 0.2, 0.1)
+    # print(r._locations_of_cars(True))
+    # print(r.average_velocity())
+    # # r._acceleration()
     # # print([(r.cells.index(car),car.speed) for car in r.cars])
-    # r._move_forward()
-    r.single_iteration()
-    print(r._locations_of_cars(True))
-    print(r.average_velocity())
+    # # r._slowing_down()
+    # # print([(r.cells.index(car),car.speed) for car in r.cars])
+    # # r._randomization()
+    # # # print([(r.cells.index(car),car.speed) for car in r.cars])
+    # # r._move_forward()
+    # r.single_iteration()
+    # print(r._locations_of_cars(True))
+    # print(r.average_velocity())
+    r.simulate(50)
