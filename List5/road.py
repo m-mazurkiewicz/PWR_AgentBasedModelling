@@ -2,6 +2,8 @@ import numpy as np
 import math
 from List5.car import Car
 from copy import deepcopy as copy
+from matplotlib import animation
+import matplotlib.pyplot as plt
 
 
 class Road:
@@ -62,9 +64,27 @@ class Road:
             self.single_iteration()
             # print(self.average_velocity())
 
+    def visualize_system_evolution(self, file_path_and_name, number_of_iterations, duration=15):
+        image_magick = animation.writers['imagemagick']
+        fps = np.ceil(20 / float(duration))
+        writer = image_magick(fps=fps)
+        fig = plt.figure()
+        ax = plt.gca()
+        plt.axis('off')
+        road_in_time = [[0] * self.number_of_cells] * number_of_iterations
+        ax.imshow(road_in_time)
+        with writer.saving(fig, file_path_and_name + ".gif", 100):
+            writer.grab_frame()
+            for i in range(number_of_iterations):
+                self.single_iteration()
+                road_in_time[i] = [1 if i in self._locations_of_cars() else 0 for i in range(self.number_of_cells)]
+                print(self._locations_of_cars())
+                ax.imshow(road_in_time)
+                writer.grab_frame()
+
 
 if __name__ == '__main__':
-    r = Road(50, 0.2, 0.1)
+    r = Road(50, 0.3, 0.1)
     # print(r._locations_of_cars(True))
     # print(r.average_velocity())
     # # r._acceleration()
@@ -77,4 +97,6 @@ if __name__ == '__main__':
     # r.single_iteration()
     # print(r._locations_of_cars(True))
     # print(r.average_velocity())
-    r.simulate(50)
+    #r.simulate(50)
+    #print(r._locations_of_cars())
+    r.visualize_system_evolution('test.gif', 50)
