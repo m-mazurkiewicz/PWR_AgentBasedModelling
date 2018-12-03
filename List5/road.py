@@ -40,14 +40,22 @@ class Road:
                 new_cells[(location+car.speed) % self.number_of_cells] = car
         self.cells = new_cells
 
+    def single_iteration(self):
+        self._acceleration()
+        self._slowing_down()
+        self._randomization()
+        self._move_forward()
+
+
 if __name__ == '__main__':
-    r = Road(50, 0.4, 0.2)
-    # print([(r.cells.index(car),car.speed) for car in r.cars])
-    r._acceleration()
+    r = Road(50, 0.4, 0.1)
     print([(r.cells.index(car),car.speed) for car in r.cars])
-    r._slowing_down()
-    print([(r.cells.index(car),car.speed) for car in r.cars])
-    r._randomization()
+    # r._acceleration()
     # print([(r.cells.index(car),car.speed) for car in r.cars])
-    r._move_forward()
+    # r._slowing_down()
+    # print([(r.cells.index(car),car.speed) for car in r.cars])
+    # r._randomization()
+    # # print([(r.cells.index(car),car.speed) for car in r.cars])
+    # r._move_forward()
+    r.single_iteration()
     print([(r.cells.index(car),car.speed) for car in r.cars])
