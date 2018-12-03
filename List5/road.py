@@ -28,9 +28,15 @@ class Road:
                         car.speed = i - 1
                         break
 
+    def randomization(self):
+        moving_cars = [car for car in self.cars if car.speed > 0]
+        for car in [moving_cars[i] for i in np.where(np.random.rand(len(moving_cars)) <= 1)[0]]:
+            car.speed -= 1
+
 
 if __name__ == '__main__':
     r = Road(5000, 0.4, 0.5)
     # print([car.speed for car in r.cells if car!=0])
     r.acceleration()
     r.slowing_down()
+    r.randomization()
