@@ -78,13 +78,27 @@ class Road:
             for i in range(number_of_iterations):
                 self.single_iteration()
                 road_in_time[i] = [1 if i in self._locations_of_cars() else 0 for i in range(self.number_of_cells)]
-                print(self._locations_of_cars())
                 ax.imshow(road_in_time)
                 writer.grab_frame()
 
 
+def plot_average_velocities(number_of_cells, densities, slowing_down_probability, max_speed=5,
+                            no_of_simulations_per_single_road=50, no_of_MC_steps=100):
+    average_speed_per_simulation =[]
+    for density_of_cars in densities:
+        average_speed = 0
+        for _ in range(no_of_MC_steps):
+            road = Road(number_of_cells, density_of_cars, slowing_down_probability, max_speed)
+            road.simulate(no_of_simulations_per_single_road)
+            average_speed += road.average_velocity()
+        average_speed /= no_of_MC_steps
+        average_speed_per_simulation.append(average_speed)
+    plt.plot(densities, average_speed_per_simulation)
+    plt.savefig('test_of_task2')
+
+
 if __name__ == '__main__':
-    r = Road(50, 0.3, 0.1)
+    #r = Road(100, 0.6, 0.3)
     # print(r._locations_of_cars(True))
     # print(r.average_velocity())
     # # r._acceleration()
@@ -99,4 +113,5 @@ if __name__ == '__main__':
     # print(r.average_velocity())
     #r.simulate(50)
     #print(r._locations_of_cars())
-    r.visualize_system_evolution('test.gif', 50)
+    #r.visualize_system_evolution('test3', 50)
+    plot_average_velocities(100, [.1, .2, .3, .4, .5, .6, .7], .3)
