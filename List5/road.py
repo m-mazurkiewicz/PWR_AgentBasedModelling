@@ -129,6 +129,18 @@ class RoadWith2Lines(Road):
                     return True
         return False
 
+    def _move_forward(self):
+        new_cells = [None for _ in range(self.new_left_line)]
+        for location, car in enumerate(self.new_left_line):
+            if car is not None:
+                new_cells[(location + car.speed) % (self.number_of_cells / 2)] = car
+        self.cells_left_line = new_cells
+        new_cells = [None for _ in range(self.new_right_line)]
+        for location, car in enumerate(self.new_right_line):
+            if car is not None:
+                new_cells[(location + car.speed) % (self.number_of_cells / 2)] = car
+        self.cells_right_line = new_cells
+
 
 def plot_average_velocities(number_of_cells, densities, slowing_down_probability, max_speed=5,
                             no_of_simulations_per_single_road=50, no_of_MC_steps=100):
@@ -146,8 +158,8 @@ def plot_average_velocities(number_of_cells, densities, slowing_down_probability
 
 
 if __name__ == '__main__':
-    r = RoadWith2Lines(50, 0.6, 0.3)
-    r._slowing_down()
+    r = RoadWith2Lines(50, 0.3, 0.3)
+
     # print(r._locations_of_cars(True))
     # print(r.average_velocity())
     # # r._acceleration()
