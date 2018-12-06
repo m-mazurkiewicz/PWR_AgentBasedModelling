@@ -84,17 +84,18 @@ class Road:
 
 
 class RoadWith2Lines(Road):
-    def __init__(self, number_of_cells_on_one_line, density_of_cars_right_line, slowing_down_probability, max_speed=5):
-        self.number_of_cells = number_of_cells_on_one_line * 2
-        self.number_of_cars = math.ceil(number_of_cells_on_one_line * density_of_cars_right_line * 1.5)
+    def __init__(self, number_of_cells_in_single_line, density_of_cars_right_line, slowing_down_probability, max_speed=5):
+        self.number_of_cells_in_single_line = number_of_cells_in_single_line
+        self.number_of_cells = self.number_of_cells_in_single_line * 2
+        self.number_of_cars = math.ceil(self.number_of_cells_in_single_line * density_of_cars_right_line * 1.5)
         self.p = slowing_down_probability
         self.max_speed = max_speed
-        self.cells_right_line = [None] * int(self.number_of_cells / 2)
-        self.cells_left_line = [None] * int(self.number_of_cells / 2)
+        self.cells_right_line = [None] * self.number_of_cells_in_single_line
+        self.cells_left_line = [None] * self.number_of_cells_in_single_line
         self.cars = [Car(self.max_speed) for _ in range(self.number_of_cars)]
-        for key, location in enumerate(np.random.choice(range(int(self.number_of_cells / 2)), int(self.number_of_cars * 2/3), replace=False)):
+        for key, location in enumerate(np.random.choice(range(self.number_of_cells_in_single_line), int(self.number_of_cars * 2/3), replace=False)):
             self.cells_right_line[location] = self.cars[key]
-        for key, location in enumerate(np.random.choice(range(int(self.number_of_cells / 2)), int(self.number_of_cars * 1/3), replace=False)):
+        for key, location in enumerate(np.random.choice(range(self.number_of_cells_in_single_line), int(self.number_of_cars * 1/3), replace=False)):
             self.cells_left_line[location] = self.cars[key + int(self.number_of_cars * 2/3)]
 
     def _slowing_down(self):
@@ -104,26 +105,26 @@ class RoadWith2Lines(Road):
             if car is not None:
                 if not self.try_to_change_line(location, car, 'left'):
                     for i in range(1, car.speed + 1):
-                        if self.cells_left_line[(location + i) % int(self.number_of_cells / 2)] is not None:
+                        if self.cells_left_line[(location + i) % self.number_of_cells_in_single_line] is not None:
                             car.speed = i - 1
                             break
         for location, car in enumerate(self.cells_right_line):
             if car is not None:
                     for i in range(1, car.speed + 1):
-                        if self.cells_right_line[(location + i) % int(self.number_of_cells / 2)] is not None:
+                        if self.cells_right_line[(location + i) % self.number_of_cells_in_single_line] is not None:
                             if not self.try_to_change_line(location, car, 'right'):
                                 car.speed = i - 1
                                 break
 
     def try_to_change_line(self, location, car, line):
         if line == 'left':
-            if self.new_right_line[location - 5 : location].count(None) == 5:
+            if self.new_right_line[location - 6 + car.speed : location].count(None) == 6 - car.speed:
                 if self.new_right_line[location : location + car.speed + 1].count(None) == car.speed + 1:
                     self.new_right_line[location] = car
                     self.new_left_line[location] = None
                     return True
         else:
-            if self.new_left_line[location - 5 : location].count(None) == 5:
+            if self.new_left_line[location - 6 + car.speed : location].count(None) == 6 - car.speed:
                 if self.new_left_line[location : location + car.speed + 1].count(None) == car.speed + 1:
                     self.new_left_line[location] = car
                     self.new_right_line[location] = None
@@ -131,15 +132,15 @@ class RoadWith2Lines(Road):
         return False
 
     def _move_forward(self):
-        new_cells = [None for _ in range(int(self.number_of_cells / 2))]
+        new_cells = [None for _ in range(self.number_of_cells_in_single_line)]
         for location, car in enumerate(self.new_left_line):
             if car is not None:
-                new_cells[(location + car.speed) % int(self.number_of_cells / 2)] = car
+                new_cells[(location + car.speed) % self.number_of_cells_in_single_line] = car
         self.cells_left_line = new_cells
-        new_cells = [None for _ in range(int(self.number_of_cells / 2))]
+        new_cells = [None for _ in range(self.number_of_cells_in_single_line)]
         for location, car in enumerate(self.new_right_line):
             if car is not None:
-                new_cells[(location + car.speed) % int(self.number_of_cells / 2)] = car
+                new_cells[(location + car.speed) % self.number_of_cells_in_single_line] = car
         self.cells_right_line = new_cells
 
 
@@ -159,10 +160,17 @@ def plot_average_velocities(number_of_cells, densities, slowing_down_probability
 
 
 if __name__ == '__main__':
-    r = RoadWith2Lines(40, 0.3, 0.3)
+    r = RoadWith2Lines(20, 0.3, 0.3)
     print([r.cells_left_line[i].speed if r.cells_left_line[i] is not None else None for i in range(int(r.number_of_cells / 2))])
     print([r.cells_right_line[i].speed if r.cells_right_line[i] is not None else None for i in range(int(r.number_of_cells / 2))])
-    r.single_iteration()
+    r._acceleration()
+    # print([r.cells_left_line[i].speed if r.cells_left_line[i] is not None else None for i in
+    #        range(int(r.number_of_cells / 2))])
+    # print([r.cells_right_line[i].speed if r.cells_right_line[i] is not None else None for i in
+    #        range(int(r.number_of_cells / 2))])
+    r._slowing_down()
+    r._randomization()
+    r._move_forward()
     print([r.cells_left_line[i].speed if r.cells_left_line[i] is not None else None for i in
            range(int(r.number_of_cells / 2))])
     print([r.cells_right_line[i].speed if r.cells_right_line[i] is not None else None for i in range(int(r.number_of_cells / 2))])
