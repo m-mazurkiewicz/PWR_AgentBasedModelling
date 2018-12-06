@@ -96,6 +96,24 @@ class RoadWith2Lines(Road):
         for key, location in enumerate(np.random.choice(range(int(self.number_of_cells / 2)), int(self.number_of_cars * 1/3), replace=False)):
             self.cells_left_line[location] = self.cars[key + int(self.number_of_cars * 2/3)]
 
+    def _slowing_down(self):
+        self.new_left_line = copy(self.cells_left_line)
+        self.new_right_line = copy(self.cells_right_line)
+        for location, car in enumerate(self.cells_left_line):
+            if car is not None:
+                if not self.try_to_change_line(location, car, 'left'):
+                    for i in range(1, car.speed + 1):
+                        if self.cells_left_line[(location + i) % int(self.number_of_cells / 2)] is not None:
+                            car.speed = i - 1
+                            break
+        for location, car in enumerate(self.cells_right_line):
+            if car is not None:
+                if not self.try_to_change_line(location, car, 'right'):
+                    for i in range(1, car.speed + 1):
+                        if self.cells_right_line[(location + i) % int(self.number_of_cells / 2)] is not None:
+                            car.speed = i - 1
+                            break
+
     def try_to_change_line(self, location, car, line):
         if line == 'left':
             if self.new_right_line[location - 5 : location].count(None) == 5:
@@ -129,7 +147,7 @@ def plot_average_velocities(number_of_cells, densities, slowing_down_probability
 
 if __name__ == '__main__':
     r = RoadWith2Lines(50, 0.6, 0.3)
-    r.try_to_change_line(10, 3  , 'left')
+    r._slowing_down()
     # print(r._locations_of_cars(True))
     # print(r.average_velocity())
     # # r._acceleration()
