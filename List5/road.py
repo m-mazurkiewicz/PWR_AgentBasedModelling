@@ -1,7 +1,8 @@
 import numpy as np
 import math
 from List5.car import Car
-from copy import deepcopy as copy
+from copy import deepcopy #as copy
+import copy
 from matplotlib import animation
 import matplotlib.pyplot as plt
 
@@ -97,8 +98,8 @@ class RoadWith2Lines(Road):
             self.cells_left_line[location] = self.cars[key + int(self.number_of_cars * 2/3)]
 
     def _slowing_down(self):
-        self.new_left_line = copy(self.cells_left_line)
-        self.new_right_line = copy(self.cells_right_line)
+        self.new_left_line = copy.copy(self.cells_left_line)
+        self.new_right_line = copy.copy(self.cells_right_line)
         for location, car in enumerate(self.cells_left_line):
             if car is not None:
                 if not self.try_to_change_line(location, car, 'left'):
@@ -108,11 +109,11 @@ class RoadWith2Lines(Road):
                             break
         for location, car in enumerate(self.cells_right_line):
             if car is not None:
-                if not self.try_to_change_line(location, car, 'right'):
                     for i in range(1, car.speed + 1):
                         if self.cells_right_line[(location + i) % int(self.number_of_cells / 2)] is not None:
-                            car.speed = i - 1
-                            break
+                            if not self.try_to_change_line(location, car, 'right'):
+                                car.speed = i - 1
+                                break
 
     def try_to_change_line(self, location, car, line):
         if line == 'left':
@@ -130,15 +131,15 @@ class RoadWith2Lines(Road):
         return False
 
     def _move_forward(self):
-        new_cells = [None for _ in range(self.new_left_line)]
+        new_cells = [None for _ in range(int(self.number_of_cells / 2))]
         for location, car in enumerate(self.new_left_line):
             if car is not None:
-                new_cells[(location + car.speed) % (self.number_of_cells / 2)] = car
+                new_cells[(location + car.speed) % int(self.number_of_cells / 2)] = car
         self.cells_left_line = new_cells
-        new_cells = [None for _ in range(self.new_right_line)]
+        new_cells = [None for _ in range(int(self.number_of_cells / 2))]
         for location, car in enumerate(self.new_right_line):
             if car is not None:
-                new_cells[(location + car.speed) % (self.number_of_cells / 2)] = car
+                new_cells[(location + car.speed) % int(self.number_of_cells / 2)] = car
         self.cells_right_line = new_cells
 
 
@@ -158,8 +159,13 @@ def plot_average_velocities(number_of_cells, densities, slowing_down_probability
 
 
 if __name__ == '__main__':
-    r = RoadWith2Lines(50, 0.3, 0.3)
-
+    r = RoadWith2Lines(40, 0.3, 0.3)
+    print([r.cells_left_line[i].speed if r.cells_left_line[i] is not None else None for i in range(int(r.number_of_cells / 2))])
+    print([r.cells_right_line[i].speed if r.cells_right_line[i] is not None else None for i in range(int(r.number_of_cells / 2))])
+    r.single_iteration()
+    print([r.cells_left_line[i].speed if r.cells_left_line[i] is not None else None for i in
+           range(int(r.number_of_cells / 2))])
+    print([r.cells_right_line[i].speed if r.cells_right_line[i] is not None else None for i in range(int(r.number_of_cells / 2))])
     # print(r._locations_of_cars(True))
     # print(r.average_velocity())
     # # r._acceleration()
