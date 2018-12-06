@@ -96,6 +96,21 @@ class RoadWith2Lines(Road):
         for key, location in enumerate(np.random.choice(range(int(self.number_of_cells / 2)), int(self.number_of_cars * 1/3), replace=False)):
             self.cells_left_line[location] = self.cars[key + int(self.number_of_cars * 2/3)]
 
+    def try_to_change_line(self, location, car, line):
+        if line == 'left':
+            if self.new_right_line[location - 5 : location].count(None) == 5:
+                if self.new_right_line[location : location + car.speed + 1].count(None) == car.speed + 1:
+                    self.new_right_line[location] = car
+                    self.new_left_line[location] = None
+                    return True
+        else:
+            if self.new_left_line[location - 5 : location].count(None) == 5:
+                if self.new_left_line[location : location + car.speed + 1].count(None) == car.speed + 1:
+                    self.new_left_line[location] = car
+                    self.new_right_line[location] = None
+                    return True
+        return False
+
 
 def plot_average_velocities(number_of_cells, densities, slowing_down_probability, max_speed=5,
                             no_of_simulations_per_single_road=50, no_of_MC_steps=100):
@@ -114,7 +129,7 @@ def plot_average_velocities(number_of_cells, densities, slowing_down_probability
 
 if __name__ == '__main__':
     r = RoadWith2Lines(50, 0.6, 0.3)
-
+    r.try_to_change_line(10, 3  , 'left')
     # print(r._locations_of_cars(True))
     # print(r.average_velocity())
     # # r._acceleration()
