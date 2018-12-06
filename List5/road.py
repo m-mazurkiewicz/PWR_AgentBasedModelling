@@ -82,6 +82,21 @@ class Road:
                 writer.grab_frame()
 
 
+class RoadWith2Lines(Road):
+    def __init__(self, number_of_cells_on_one_line, density_of_cars_right_line, slowing_down_probability, max_speed=5):
+        self.number_of_cells = number_of_cells_on_one_line * 2
+        self.number_of_cars = math.ceil(number_of_cells_on_one_line * density_of_cars_right_line * 1.5)
+        self.p = slowing_down_probability
+        self.max_speed = max_speed
+        self.cells_right_line = [None] * int(self.number_of_cells / 2)
+        self.cells_left_line = [None] * int(self.number_of_cells / 2)
+        self.cars = [Car(self.max_speed) for _ in range(self.number_of_cars)]
+        for key, location in enumerate(np.random.choice(range(int(self.number_of_cells / 2)), int(self.number_of_cars * 2/3), replace=False)):
+            self.cells_right_line[location] = self.cars[key]
+        for key, location in enumerate(np.random.choice(range(int(self.number_of_cells / 2)), int(self.number_of_cars * 1/3), replace=False)):
+            self.cells_left_line[location] = self.cars[key + int(self.number_of_cars * 2/3)]
+
+
 def plot_average_velocities(number_of_cells, densities, slowing_down_probability, max_speed=5,
                             no_of_simulations_per_single_road=50, no_of_MC_steps=100):
     average_speed_per_simulation =[]
@@ -98,7 +113,8 @@ def plot_average_velocities(number_of_cells, densities, slowing_down_probability
 
 
 if __name__ == '__main__':
-    #r = Road(100, 0.6, 0.3)
+    r = RoadWith2Lines(50, 0.6, 0.3)
+
     # print(r._locations_of_cars(True))
     # print(r.average_velocity())
     # # r._acceleration()
@@ -114,4 +130,4 @@ if __name__ == '__main__':
     #r.simulate(50)
     #print(r._locations_of_cars())
     #r.visualize_system_evolution('test3', 50)
-    plot_average_velocities(100, [.1, .2, .3, .4, .5, .6, .7], .3)
+    #plot_average_velocities(100, [.1, .2, .3, .4, .5, .6, .7], .3)
