@@ -86,7 +86,6 @@ class Road:
 class RoadWith2Lines(Road):
     def __init__(self, number_of_cells_in_single_line, density_of_cars_right_line, slowing_down_probability, max_speed=5):
         self.number_of_cells_in_single_line = number_of_cells_in_single_line
-        self.number_of_cells = self.number_of_cells_in_single_line * 2
         self.number_of_cars = math.ceil(self.number_of_cells_in_single_line * density_of_cars_right_line * 1.5)
         self.p = slowing_down_probability
         self.max_speed = max_speed
@@ -118,17 +117,15 @@ class RoadWith2Lines(Road):
 
     def try_to_change_line(self, location, car, line):
         if line == 'left':
-            if self.new_right_line[location - 6 + car.speed : location].count(None) == 6 - car.speed:
-                if self.new_right_line[location : location + car.speed + 1].count(None) == car.speed + 1:
-                    self.new_right_line[location] = car
-                    self.new_left_line[location] = None
-                    return True
+            if (self.new_right_line[location - 6 + car.speed : location].count(None) == 6 - car.speed) & (self.new_right_line[location : location + car.speed + 1].count(None) == car.speed + 1):
+                self.new_right_line[location] = car
+                self.new_left_line[location] = None
+                return True
         else:
-            if self.new_left_line[location - 6 + car.speed : location].count(None) == 6 - car.speed:
-                if self.new_left_line[location : location + car.speed + 1].count(None) == car.speed + 1:
-                    self.new_left_line[location] = car
-                    self.new_right_line[location] = None
-                    return True
+            if (self.new_left_line[location - 6 + car.speed : location].count(None) == 6 - car.speed) & (self.new_left_line[location : location + car.speed + 1].count(None) == car.speed + 1):
+                self.new_left_line[location] = car
+                self.new_right_line[location] = None
+                return True
         return False
 
     def _move_forward(self):
@@ -161,19 +158,19 @@ def plot_average_velocities(number_of_cells, densities, slowing_down_probability
 
 if __name__ == '__main__':
     r = RoadWith2Lines(20, 0.3, 0.3)
-    print([r.cells_left_line[i].speed if r.cells_left_line[i] is not None else None for i in range(int(r.number_of_cells / 2))])
-    print([r.cells_right_line[i].speed if r.cells_right_line[i] is not None else None for i in range(int(r.number_of_cells / 2))])
+    print([r.cells_left_line[i].speed if r.cells_left_line[i] is not None else None for i in range(int(r.number_of_cells_in_single_line))])
+    print([r.cells_right_line[i].speed if r.cells_right_line[i] is not None else None for i in range(int(r.number_of_cells_in_single_line))])
     r._acceleration()
     # print([r.cells_left_line[i].speed if r.cells_left_line[i] is not None else None for i in
-    #        range(int(r.number_of_cells / 2))])
+    #        range(int(r.number_of_cells_in_single_line))])
     # print([r.cells_right_line[i].speed if r.cells_right_line[i] is not None else None for i in
-    #        range(int(r.number_of_cells / 2))])
+    #        range(int(r.number_of_cells_in_single_line))])
     r._slowing_down()
     r._randomization()
     r._move_forward()
     print([r.cells_left_line[i].speed if r.cells_left_line[i] is not None else None for i in
-           range(int(r.number_of_cells / 2))])
-    print([r.cells_right_line[i].speed if r.cells_right_line[i] is not None else None for i in range(int(r.number_of_cells / 2))])
+           range(int(r.number_of_cells_in_single_line))])
+    print([r.cells_right_line[i].speed if r.cells_right_line[i] is not None else None for i in range(int(r.number_of_cells_in_single_line))])
     # print(r._locations_of_cars(True))
     # print(r.average_velocity())
     # # r._acceleration()
