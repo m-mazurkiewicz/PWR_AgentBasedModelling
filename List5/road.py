@@ -179,9 +179,10 @@ def plot_average_velocities(file_name, number_of_cells, densities, slowing_down_
         results_array = np.array(average_speed_per_simulation)
         results_array_left = np.array(average_speed_per_simulation_left)
         results_array_right = np.array(average_speed_per_simulation_right)
-        plt.errorbar(densities, np.apply_along_axis(np.mean, 1, results_array), yerr=np.apply_along_axis(np.std, 1, results_array))
-        plt.errorbar(densities, np.apply_along_axis(np.mean, 1, results_array_right), yerr=np.apply_along_axis(np.std, 1, results_array_right))
-        plt.errorbar(densities, np.apply_along_axis(np.mean, 1, results_array_left), yerr=np.apply_along_axis(np.std, 1, results_array_left))
+        average = plt.errorbar(densities, np.apply_along_axis(np.mean, 1, results_array), yerr=np.apply_along_axis(np.std, 1, results_array))
+        right = plt.errorbar(densities, np.apply_along_axis(np.mean, 1, results_array_right), yerr=np.apply_along_axis(np.std, 1, results_array_right))
+        left = plt.errorbar(densities, np.apply_along_axis(np.mean, 1, results_array_left), yerr=np.apply_along_axis(np.std, 1, results_array_left))
+        lgnd = plt.legend((average, left, right), ('Average velocity','Average velocity on right line','Average velocity on left line'))
         plt.xlabel('Cars density')
         plt.ylabel('Average speed')
         plt.title('Average speed for simulation with {0} cells \n running for {1} iterations each ({2} MC simulations \n '
@@ -258,6 +259,6 @@ if __name__ == '__main__':
     # r = Road(200, .6, .3)
     # r.visualize_system_evolution('evolution_rho=06', 100)
     #r.visualize_system_evolution('test3', 50)
-    # for p in [.1, .2, .3, .4, .5, .6, .7]:
-    #     plot_average_velocities('task_2',200, [.05,.1, .15,.2,.25, .3,.35, .4,.45, .5,.55, .6,.65, .7], p)
-    plot_average_velocities('two_lines_test',200, [.05,.1, .15,.2,.25, .3,.35, .4,.45, .5,.55, .6,.65, .7], 0.3, two_lines=True)
+    for p in [.1, .2, .3, .4, .5, .6, .7]:
+        plot_average_velocities('task_2_one_line',200, [.05,.1, .15,.2,.25, .3,.35, .4,.45, .5,.55, .6,.65, .7], p)
+    # plot_average_velocities('two_lines_test',100, [.05,.1, .15,.2,.25, .3,.35, .4,.45, .5,.55, .6,.65, .7], 0.3, two_lines=True)
