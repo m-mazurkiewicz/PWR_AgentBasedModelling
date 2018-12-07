@@ -1,3 +1,4 @@
+import os
 import numpy as np
 import math
 from List5.car import Car
@@ -65,7 +66,7 @@ class Road:
             self.single_iteration()
             # print(self.average_velocity())
 
-    def visualize_system_evolution(self, file_path_and_name, number_of_iterations, duration=15):
+    def visualize_system_evolution(self, file_name, number_of_iterations, duration=15):
         image_magick = animation.writers['imagemagick']
         fps = np.ceil(20 / float(duration))
         writer = image_magick(fps=fps)
@@ -74,7 +75,8 @@ class Road:
         plt.axis('off')
         road_in_time = [[0] * self.number_of_cells] * number_of_iterations
         ax.imshow(road_in_time)
-        with writer.saving(fig, file_path_and_name + ".gif", 100):
+        os.makedirs('figures', exist_ok=True)
+        with writer.saving(fig, 'figures/' + file_name + ".gif", 100):
             writer.grab_frame()
             for i in range(number_of_iterations):
                 self.single_iteration()
@@ -152,25 +154,26 @@ def plot_average_velocities(number_of_cells, densities, slowing_down_probability
             average_speed += road.average_velocity()
         average_speed /= no_of_MC_steps
         average_speed_per_simulation.append(average_speed)
+    os.makedirs('figures', exist_ok=True)
     plt.plot(densities, average_speed_per_simulation)
-    plt.savefig('test_of_task2')
+    plt.savefig('figures/test_of_task2')
 
 
 if __name__ == '__main__':
-    r = RoadWith2Lines(20, 0.3, 0.3)
-    print([r.cells_left_line[i].speed if r.cells_left_line[i] is not None else None for i in range(int(r.number_of_cells_in_single_line))])
-    print([r.cells_right_line[i].speed if r.cells_right_line[i] is not None else None for i in range(int(r.number_of_cells_in_single_line))])
-    r._acceleration()
+    # r = RoadWith2Lines(20, 0.3, 0.3)
+    # print([r.cells_left_line[i].speed if r.cells_left_line[i] is not None else None for i in range(int(r.number_of_cells_in_single_line))])
+    # print([r.cells_right_line[i].speed if r.cells_right_line[i] is not None else None for i in range(int(r.number_of_cells_in_single_line))])
+    # r._acceleration()
+    # # print([r.cells_left_line[i].speed if r.cells_left_line[i] is not None else None for i in
+    # #        range(int(r.number_of_cells_in_single_line))])
+    # # print([r.cells_right_line[i].speed if r.cells_right_line[i] is not None else None for i in
+    # #        range(int(r.number_of_cells_in_single_line))])
+    # r._slowing_down()
+    # r._randomization()
+    # r._move_forward()
     # print([r.cells_left_line[i].speed if r.cells_left_line[i] is not None else None for i in
     #        range(int(r.number_of_cells_in_single_line))])
-    # print([r.cells_right_line[i].speed if r.cells_right_line[i] is not None else None for i in
-    #        range(int(r.number_of_cells_in_single_line))])
-    r._slowing_down()
-    r._randomization()
-    r._move_forward()
-    print([r.cells_left_line[i].speed if r.cells_left_line[i] is not None else None for i in
-           range(int(r.number_of_cells_in_single_line))])
-    print([r.cells_right_line[i].speed if r.cells_right_line[i] is not None else None for i in range(int(r.number_of_cells_in_single_line))])
+    # print([r.cells_right_line[i].speed if r.cells_right_line[i] is not None else None for i in range(int(r.number_of_cells_in_single_line))])
     # print(r._locations_of_cars(True))
     # print(r.average_velocity())
     # # r._acceleration()
@@ -186,4 +189,4 @@ if __name__ == '__main__':
     #r.simulate(50)
     #print(r._locations_of_cars())
     #r.visualize_system_evolution('test3', 50)
-    #plot_average_velocities(100, [.1, .2, .3, .4, .5, .6, .7], .3)
+    plot_average_velocities(100, [.1, .2, .3, .4, .5, .6, .7], .3)
