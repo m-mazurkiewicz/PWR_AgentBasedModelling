@@ -143,20 +143,25 @@ class RoadWith2Lines(Road):
         self.cells_right_line = new_cells
 
 
-def plot_average_velocities(number_of_cells, densities, slowing_down_probability, max_speed=5,
+def plot_average_velocities(file_name, number_of_cells, densities, slowing_down_probability, max_speed=5,
                             no_of_simulations_per_single_road=50, no_of_MC_steps=100):
     average_speed_per_simulation =[]
     for density_of_cars in densities:
-        average_speed = 0
+        average_speeds = []
         for _ in range(no_of_MC_steps):
             road = Road(number_of_cells, density_of_cars, slowing_down_probability, max_speed)
             road.simulate(no_of_simulations_per_single_road)
-            average_speed += road.average_velocity()
-        average_speed /= no_of_MC_steps
-        average_speed_per_simulation.append(average_speed)
+            average_speeds.append(road.average_velocity())
+        average_speed_per_simulation.append(average_speeds)
     os.makedirs('figures', exist_ok=True)
-    plt.plot(densities, average_speed_per_simulation)
-    plt.savefig('figures/test_of_task2')
+    results_array = np.array(average_speed_per_simulation)
+    plt.errorbar(densities, np.apply_along_axis(np.mean, 1, results_array), yerr=np.apply_along_axis(np.std, 1, results_array))
+    plt.xlabel('Cars density')
+    plt.ylabel('Average speed')
+    plt.title('Average speed for simulation with {0} cells \n running for {1} iterations each ({2} MC simulations \n '
+              'p={3})'.format(number_of_cells,no_of_simulations_per_single_road,no_of_MC_steps,
+                              slowing_down_probability))
+    plt.savefig('figures/{0}_{1}_{2}_{3}_p={4}.png'.format(file_name,number_of_cells,no_of_simulations_per_single_road,no_of_MC_steps,slowing_down_probability))
 
 
 if __name__ == '__main__':
@@ -189,4 +194,4 @@ if __name__ == '__main__':
     #r.simulate(50)
     #print(r._locations_of_cars())
     #r.visualize_system_evolution('test3', 50)
-    plot_average_velocities(100, [.1, .2, .3, .4, .5, .6, .7], .3)
+    plot_average_velocities('task_2',100, [.1, .2, .3, .4, .5, .6, .7], .3)
