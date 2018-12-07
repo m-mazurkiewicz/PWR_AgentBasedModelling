@@ -144,6 +144,44 @@ class RoadWith2Lines(Road):
                 new_cells[(location + car.speed) % self.number_of_cells_in_single_line] = car
         self.cells_right_line = new_cells
 
+    def _locations_of_cars(self, line=None):
+        if line is 'right':
+            return [self.cells_right_line.index(car) for car in self.cars if car in self.cells_right_line]
+        elif line is 'left':
+            return [self.cells_left_line.index(car) for car in self.cars if car in self.cells_left_line]
+        else:
+            return [self.cells.index(car) for car in self.cars]
+
+    def visualize_system_evolution(self, file_name, number_of_iterations, duration=15):
+        image_magick = animation.writers['imagemagick']
+        fps = np.ceil(20 / float(duration))
+        writer1 = image_magick(fps=fps)
+        writer2 = image_magick(fps=fps)
+        fig = plt.figure()
+        ax = plt.gca()
+        plt.axis('off')
+        fig2 = plt.figure()
+        ax2 = plt.gca()
+        plt.axis('off')
+        left_line_in_time = [[0] * self.number_of_cells_in_single_line] * number_of_iterations
+        right_line_in_time = [[0] * self.number_of_cells_in_single_line] * number_of_iterations
+        ax.imshow(left_line_in_time)
+        ax2.imshow(right_line_in_time)
+        os.makedirs('figures', exist_ok=True)
+        with writer1.saving(fig, 'figures/' + file_name + "_left.gif", 100):
+            with writer2.saving(fig2, 'figures/' + file_name + "_right.gif", 100):
+                writer1.grab_frame()
+                writer2.grab_frame()
+                for i in range(number_of_iterations):
+                    self.single_iteration()
+                    left_line_in_time[i] = [1 if i in self._locations_of_cars('left') else 0 for i in range(self.number_of_cells_in_single_line)]
+                    right_line_in_time[i] = [1 if i in self._locations_of_cars('right') else 0 for i in
+                                            range(self.number_of_cells_in_single_line)]
+                    ax.imshow(left_line_in_time)
+                    writer1.grab_frame()
+                    ax2.imshow(right_line_in_time)
+                    writer2.grab_frame()
+
     def _velocities_of_cars(self, line=None):
         if line is 'right':
             return [car.speed for car in self.cars if car in self.cells_right_line]
@@ -212,7 +250,8 @@ def plot_average_velocities(file_name, number_of_cells, densities, slowing_down_
 
 
 if __name__ == '__main__':
-    # r = RoadWith2Lines(20, 0.3, 0.3)
+    r = RoadWith2Lines(60, 0.3, 0.2)
+    r.visualize_system_evolution('test_visualization_2_lines', 40)
     # print([r.cells_left_line[i].speed if r.cells_left_line[i] is not None else None for i in range(int(r.number_of_cells_in_single_line))])
     # print([r.cells_right_line[i].speed if r.cells_right_line[i] is not None else None for i in range(int(r.number_of_cells_in_single_line))])
     # r._acceleration()
@@ -262,3 +301,6 @@ if __name__ == '__main__':
     for p in [.1, .2, .3, .4, .5, .6, .7]:
         plot_average_velocities('task_2_one_line',200, [.05,.1, .15,.2,.25, .3,.35, .4,.45, .5,.55, .6,.65, .7], p)
     # plot_average_velocities('two_lines_test',100, [.05,.1, .15,.2,.25, .3,.35, .4,.45, .5,.55, .6,.65, .7], 0.3, two_lines=True)
+    # for p in [.1, .2, .3, .4, .5, .6, .7]:
+    #     plot_average_velocities('task_2',200, [.05,.1, .15,.2,.25, .3,.35, .4,.45, .5,.55, .6,.65, .7], p)
+    # plot_average_velocities('two_lines_test',200, [.05,.1, .15,.2,.25, .3,.35, .4,.45, .5,.55, .6,.65, .7], 0.3, two_lines=True)
