@@ -144,39 +144,85 @@ class RoadWith2Lines(Road):
                 new_cells[(location + car.speed) % self.number_of_cells_in_single_line] = car
         self.cells_right_line = new_cells
 
+    def _velocities_of_cars(self, line=None):
+        if line is 'right':
+            return [car.speed for car in self.cars if car in self.cells_right_line]
+        elif line is 'left':
+            return [car.speed for car in self.cars if car in self.cells_left_line]
+        else:
+            return [car.speed for car in self.cars]
+
+    def average_velocity(self, line=None):
+        return np.mean(self._velocities_of_cars(line))
+
 
 def plot_average_velocities(file_name, number_of_cells, densities, slowing_down_probability, max_speed=5,
-                            no_of_simulations_per_single_road=50, no_of_MC_steps=100):
-    average_speed_per_simulation =[]
-    for density_of_cars in densities:
-        average_speeds = []
-        for _ in range(no_of_MC_steps):
-            road = Road(number_of_cells, density_of_cars, slowing_down_probability, max_speed)
-            road.simulate(no_of_simulations_per_single_road)
-            average_speeds.append(road.average_velocity())
-        average_speed_per_simulation.append(average_speeds)
-    os.makedirs('figures', exist_ok=True)
-    results_array = np.array(average_speed_per_simulation)
-    plt.errorbar(densities, np.apply_along_axis(np.mean, 1, results_array), yerr=np.apply_along_axis(np.std, 1, results_array))
-    plt.xlabel('Cars density')
-    plt.ylabel('Average speed')
-    plt.title('Average speed for simulation with {0} cells \n running for {1} iterations each ({2} MC simulations \n '
-              'p={3})'.format(number_of_cells,no_of_simulations_per_single_road,no_of_MC_steps,
-                              slowing_down_probability))
-    plt.savefig('figures/{0}_{1}_{2}_{3}_p={4}.png'.format(file_name,number_of_cells,no_of_simulations_per_single_road,no_of_MC_steps,slowing_down_probability))
-    plt.close()
+                            no_of_simulations_per_single_road=50, no_of_MC_steps=100, two_lines=False):
+    if two_lines:
+        average_speed_per_simulation =[]
+        average_speed_per_simulation_left =[]
+        average_speed_per_simulation_right =[]
+        for density_of_cars in densities:
+            average_speeds = []
+            average_speeds_left = []
+            average_speeds_right = []
+            for _ in range(no_of_MC_steps):
+                road = RoadWith2Lines(number_of_cells, density_of_cars, slowing_down_probability, max_speed)
+                road.simulate(no_of_simulations_per_single_road)
+                average_speeds.append(road.average_velocity())
+                average_speeds_left.append(road.average_velocity('left'))
+                average_speeds_right.append(road.average_velocity('right'))
+            average_speed_per_simulation.append(average_speeds)
+            average_speed_per_simulation_left.append(average_speeds_left)
+            average_speed_per_simulation_right.append(average_speeds_right)
+        os.makedirs('figures', exist_ok=True)
+        results_array = np.array(average_speed_per_simulation)
+        results_array_left = np.array(average_speed_per_simulation_left)
+        results_array_right = np.array(average_speed_per_simulation_right)
+        plt.errorbar(densities, np.apply_along_axis(np.mean, 1, results_array), yerr=np.apply_along_axis(np.std, 1, results_array))
+        plt.errorbar(densities, np.apply_along_axis(np.mean, 1, results_array_right), yerr=np.apply_along_axis(np.std, 1, results_array_right))
+        plt.errorbar(densities, np.apply_along_axis(np.mean, 1, results_array_left), yerr=np.apply_along_axis(np.std, 1, results_array_left))
+        plt.xlabel('Cars density')
+        plt.ylabel('Average speed')
+        plt.title('Average speed for simulation with {0} cells \n running for {1} iterations each ({2} MC simulations \n '
+                  'p={3})'.format(number_of_cells,no_of_simulations_per_single_road,no_of_MC_steps,
+                                  slowing_down_probability))
+        plt.savefig('figures/{0}_{1}_{2}_{3}_p={4}.png'.format(file_name,number_of_cells,no_of_simulations_per_single_road,no_of_MC_steps,slowing_down_probability))
+        plt.close()
+    else:
+        average_speed_per_simulation =[]
+        for density_of_cars in densities:
+            average_speeds = []
+            for _ in range(no_of_MC_steps):
+                road = Road(number_of_cells, density_of_cars, slowing_down_probability, max_speed)
+                road.simulate(no_of_simulations_per_single_road)
+                average_speeds.append(road.average_velocity())
+            average_speed_per_simulation.append(average_speeds)
+        os.makedirs('figures', exist_ok=True)
+        results_array = np.array(average_speed_per_simulation)
+        plt.errorbar(densities, np.apply_along_axis(np.mean, 1, results_array), yerr=np.apply_along_axis(np.std, 1, results_array))
+        plt.xlabel('Cars density')
+        plt.ylabel('Average speed')
+        plt.title('Average speed for simulation with {0} cells \n running for {1} iterations each ({2} MC simulations \n '
+                  'p={3})'.format(number_of_cells,no_of_simulations_per_single_road,no_of_MC_steps,
+                                  slowing_down_probability))
+        plt.savefig('figures/{0}_{1}_{2}_{3}_p={4}.png'.format(file_name,number_of_cells,no_of_simulations_per_single_road,no_of_MC_steps,slowing_down_probability))
+        plt.close()
 
 
 if __name__ == '__main__':
-    r = RoadWith2Lines(20, 0.3, 0.3)
-    print([r.cells_left_line[i].speed if r.cells_left_line[i] is not None else None for i in range(int(r.number_of_cells_in_single_line))])
-    print([r.cells_right_line[i].speed if r.cells_right_line[i] is not None else None for i in range(int(r.number_of_cells_in_single_line))])
-    r._acceleration()
-    r._slowing_down()
-    print([r.new_left_line[i].speed if r.new_left_line[i] is not None else None for i in
-           range(int(r.number_of_cells_in_single_line))])
-    print([r.new_right_line[i].speed if r.new_right_line[i] is not None else None for i in
-           range(int(r.number_of_cells_in_single_line))])
+    # r = RoadWith2Lines(20, 0.3, 0.3)
+    # print([r.cells_left_line[i].speed if r.cells_left_line[i] is not None else None for i in range(int(r.number_of_cells_in_single_line))])
+    # print([r.cells_right_line[i].speed if r.cells_right_line[i] is not None else None for i in range(int(r.number_of_cells_in_single_line))])
+    # r._acceleration()
+    # r._slowing_down()
+    # print([r.new_left_line[i].speed if r.new_left_line[i] is not None else None for i in
+    #        range(int(r.number_of_cells_in_single_line))])
+    # print([r.new_right_line[i].speed if r.new_right_line[i] is not None else None for i in
+    #        range(int(r.number_of_cells_in_single_line))])
+    # print(r.average_velocity())
+    # print(r.average_velocity('right'))
+    # print(r.average_velocity('left'))
     # r._slowing_down()
     # r._randomization()
     # r._move_forward()
@@ -214,3 +260,4 @@ if __name__ == '__main__':
     #r.visualize_system_evolution('test3', 50)
     # for p in [.1, .2, .3, .4, .5, .6, .7]:
     #     plot_average_velocities('task_2',200, [.05,.1, .15,.2,.25, .3,.35, .4,.45, .5,.55, .6,.65, .7], p)
+    plot_average_velocities('two_lines_test',200, [.05,.1, .15,.2,.25, .3,.35, .4,.45, .5,.55, .6,.65, .7], 0.3, two_lines=True)
