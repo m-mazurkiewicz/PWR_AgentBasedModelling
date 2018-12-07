@@ -162,6 +162,7 @@ def plot_average_velocities(file_name, number_of_cells, densities, slowing_down_
               'p={3})'.format(number_of_cells,no_of_simulations_per_single_road,no_of_MC_steps,
                               slowing_down_probability))
     plt.savefig('figures/{0}_{1}_{2}_{3}_p={4}.png'.format(file_name,number_of_cells,no_of_simulations_per_single_road,no_of_MC_steps,slowing_down_probability))
+    plt.close()
 
 
 if __name__ == '__main__':
@@ -194,4 +195,5 @@ if __name__ == '__main__':
     #r.simulate(50)
     #print(r._locations_of_cars())
     #r.visualize_system_evolution('test3', 50)
-    plot_average_velocities('task_2',100, [.1, .2, .3, .4, .5, .6, .7], .3)
+    for p in [.1, .2, .3, .4, .5, .6, .7]:
+        plot_average_velocities('task_2',100, [.1, .2, .3, .4, .5, .6, .7], p)
