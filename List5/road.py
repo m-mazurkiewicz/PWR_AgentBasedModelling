@@ -196,4 +196,4 @@ if __name__ == '__main__':
     #print(r._locations_of_cars())
     #r.visualize_system_evolution('test3', 50)
     for p in [.1, .2, .3, .4, .5, .6, .7]:
-        plot_average_velocities('task_2',100, [.1, .2, .3, .4, .5, .6, .7], p)
+        plot_average_velocities('task_2',200, [.05,.1, .15,.2,.25, .3,.35, .4,.45, .5,.55, .6,.65, .7], p)
