@@ -119,15 +119,17 @@ class RoadWith2Lines(Road):
 
     def try_to_change_line(self, location, car, line):
         if line == 'left':
-            if (self.new_right_line[location - 6 + car.speed : location].count(None) == 6 - car.speed) & (self.new_right_line[location : location + car.speed + 1].count(None) == car.speed + 1):
-                self.new_right_line[location] = car
-                self.new_left_line[location] = None
-                return True
+            if self.new_right_line[location - 6 + car.speed : location].count(None) == 6 - car.speed:
+                if self.new_right_line[location : location + car.speed + 1].count(None) == car.speed + 1:
+                    self.new_right_line[location] = car
+                    self.new_left_line[location] = None
+                    return True
         else:
-            if (self.new_left_line[location - 6 + car.speed : location].count(None) == 6 - car.speed) & (self.new_left_line[location : location + car.speed + 1].count(None) == car.speed + 1):
-                self.new_left_line[location] = car
-                self.new_right_line[location] = None
-                return True
+            if self.new_left_line[location - 6 + car.speed : location].count(None) == 6 - car.speed:
+                if self.new_left_line[location : location + car.speed + 1].count(None) == car.speed + 1:
+                    self.new_left_line[location] = car
+                    self.new_right_line[location] = None
+                    return True
         return False
 
     def _move_forward(self):
@@ -166,14 +168,15 @@ def plot_average_velocities(file_name, number_of_cells, densities, slowing_down_
 
 
 if __name__ == '__main__':
-    # r = RoadWith2Lines(20, 0.3, 0.3)
-    # print([r.cells_left_line[i].speed if r.cells_left_line[i] is not None else None for i in range(int(r.number_of_cells_in_single_line))])
-    # print([r.cells_right_line[i].speed if r.cells_right_line[i] is not None else None for i in range(int(r.number_of_cells_in_single_line))])
-    # r._acceleration()
-    # # print([r.cells_left_line[i].speed if r.cells_left_line[i] is not None else None for i in
-    # #        range(int(r.number_of_cells_in_single_line))])
-    # # print([r.cells_right_line[i].speed if r.cells_right_line[i] is not None else None for i in
-    # #        range(int(r.number_of_cells_in_single_line))])
+    r = RoadWith2Lines(20, 0.3, 0.3)
+    print([r.cells_left_line[i].speed if r.cells_left_line[i] is not None else None for i in range(int(r.number_of_cells_in_single_line))])
+    print([r.cells_right_line[i].speed if r.cells_right_line[i] is not None else None for i in range(int(r.number_of_cells_in_single_line))])
+    r._acceleration()
+    r._slowing_down()
+    print([r.new_left_line[i].speed if r.new_left_line[i] is not None else None for i in
+           range(int(r.number_of_cells_in_single_line))])
+    print([r.new_right_line[i].speed if r.new_right_line[i] is not None else None for i in
+           range(int(r.number_of_cells_in_single_line))])
     # r._slowing_down()
     # r._randomization()
     # r._move_forward()
@@ -194,6 +197,20 @@ if __name__ == '__main__':
     # print(r.average_velocity())
     #r.simulate(50)
     #print(r._locations_of_cars())
+    # plot_average_velocities(200, [.05, .1, .15, .2, .25, .3, .35, .4, .45, .5, .55, .6, .65, .7], .3)
+    # print(1)
+    # plot_average_velocities(200, [.05, .1, .15, .2, .25, .3, .35, .4, .45, .5, .55, .6, .65, .7], .1)
+    # print(1)
+    # plot_average_velocities(200, [.05, .1, .15, .2, .25, .3, .35, .4, .45, .5, .55, .6, .65, .7], .5)
+    # print(1)
+    # plot_average_velocities(200, [.05, .1, .15, .2, .25, .3, .35, .4, .45, .5, .55, .6, .65, .7], .7)
+    # r = Road(200, .1, .3)
+    # r.visualize_system_evolution('evolution_rho=01', 100)
+    # print(1)
+    # r = Road(200, .2, .3)
+    # r.visualize_system_evolution('evolution_rho=02', 100)
+    # r = Road(200, .6, .3)
+    # r.visualize_system_evolution('evolution_rho=06', 100)
     #r.visualize_system_evolution('test3', 50)
-    for p in [.1, .2, .3, .4, .5, .6, .7]:
-        plot_average_velocities('task_2',200, [.05,.1, .15,.2,.25, .3,.35, .4,.45, .5,.55, .6,.65, .7], p)
+    # for p in [.1, .2, .3, .4, .5, .6, .7]:
+    #     plot_average_velocities('task_2',200, [.05,.1, .15,.2,.25, .3,.35, .4,.45, .5,.55, .6,.65, .7], p)
