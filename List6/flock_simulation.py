@@ -38,7 +38,6 @@ class Flock:
         pass
 
 
-
 if __name__ == '__main__':
     f = Flock(num_boids=5, boid_size=3)
     for boid in range(f.num_boids):
