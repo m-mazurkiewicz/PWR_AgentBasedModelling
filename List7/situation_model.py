@@ -1,6 +1,6 @@
 from networkx import Graph, complete_graph
 from numpy.random import choice, random
-from numpy import mean, absolute, sum
+from numpy import absolute, sum
 
 
 class SituationGraph:
@@ -20,19 +20,10 @@ class SituationGraph:
             node = self.select_random_node()
             if random() < flexibility:
                 neighbors = choice(list(self.network.neighbors(node)), no_of_neighbours, replace=replace)
-                if absolute(sum([self.spins[x] for x in neighbors])) > 0:
-                    self.spins[node] = 1
-                elif absolute(sum([self.spins[x] for x in neighbors])) < 0:
-                    self.spins[node] = -1
+                if absolute(sum([self.spins[x] for x in neighbors])) == no_of_neighbours:
+                    self.spins[node] = self.spins[neighbors[0]]
             else:
-                self.spins[node] *= (-1)
-
-            # if absolute(sum([self.spins[x] for x in neighbors])) == no_of_neighbours:
-            #     self.spins[node] = self.spins[neighbors[0]]
-            # else:
-            #     if random()<epsilon:
-            #         self.spins[node] *= (-1)
-            # self.magnetisation.append(mean(list(self.spins.values())))
+                self.spins[node] *= round(random()) * 2 - 1
 
     def select_random_node(self):
         random_node = choice(list(self.network.nodes()))
