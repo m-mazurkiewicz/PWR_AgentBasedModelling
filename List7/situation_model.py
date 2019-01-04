@@ -1,12 +1,10 @@
-from networkx import Graph, complete_graph
 from numpy.random import choice, random
 from numpy import absolute, sum
 
 
 class SituationGraph:
-    def __init__(self, graph: Graph):
-        self.network = graph
-        self.spins = self.initialise_spins(graph.number_of_nodes(),-1)
+    def __init__(self, num_agents):
+        self.spins = self.initialise_spins(num_agents,-1)
 
     @staticmethod
     def initialise_spins(size, spin):
@@ -19,17 +17,16 @@ class SituationGraph:
         for i in range(num_steps):
             node = self.select_random_node()
             if random() < flexibility:
-                neighbors = choice(list(self.network.neighbors(node)), no_of_neighbours, replace=replace)
-                if absolute(sum([self.spins[x] for x in neighbors])) == no_of_neighbours:
-                    self.spins[node] = self.spins[neighbors[0]]
+                neighbors_spins = choice(list(self.spins.values()), no_of_neighbours, replace=replace)
+                if absolute(sum(neighbors_spins)) == no_of_neighbours:
+                    self.spins[node] = neighbors_spins[0]
             else:
                 self.spins[node] *= round(random()) * 2 - 1
 
     def select_random_node(self):
-        random_node = choice(list(self.network.nodes()))
-        return random_node
+        return choice(list(self.spins.keys()))
 
 
 if __name__ == '__main__':
-    graph = SituationGraph(complete_graph(100))
+    graph = SituationGraph(100)
     graph.simulate(100)
