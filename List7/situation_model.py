@@ -1,5 +1,5 @@
 from numpy.random import choice, random
-from numpy import absolute, sum
+from numpy import absolute, sum, mean
 
 
 class SituationGraph:
@@ -21,10 +21,13 @@ class SituationGraph:
                 if absolute(sum(neighbors_spins)) == no_of_neighbours:
                     self.spins[node] = neighbors_spins[0]
             else:
-                self.spins[node] *= (random() <= (1 - flexibility)) * 2 - 1
+                self.spins[node] = absolute(self.spins[node]-(random() <= (1 - flexibility)))
 
     def select_random_node(self):
         return choice(list(self.spins.keys()))
+
+    def concentration(self):
+        return mean(list(self.spins.values()))
 
 
 if __name__ == '__main__':
