@@ -10,13 +10,13 @@ import os
 
 class SituationGraph:
     def __init__(self, num_agents):
-        self.spins = self.initialise_spins(num_agents)
+        self.num_agents = num_agents
+        self.spins = self.initialise_spins()
         self.historical_concentrations = []
 
-    @staticmethod
-    def initialise_spins(size):
+    def initialise_spins(self):
         d = dict()
-        for i in range(size):
+        for i in range(self.num_agents):
             d[i] = 1
         return d
 
@@ -24,8 +24,9 @@ class SituationGraph:
         for i in range(num_steps):
             node = self.select_random_node()
             if random() <= (1 - independence):
-                neighbors_spins = choice(list(self.spins.values()), no_of_neighbours, replace=replace)
-                if absolute(sum(neighbors_spins)) == no_of_neighbours:
+                neighbors = choice(list(set(range(self.num_agents)).difference([node])), no_of_neighbours, replace=replace)
+                neighbors_spins = [self.spins[node] for node in neighbors]
+                if sum(neighbors_spins[0]==neighbors_spins) == no_of_neighbours:
                     self.spins[node] = neighbors_spins[0]
             else:
                 self.spins[node] = absolute(self.spins[node]-(random() <= (1 - flexibility)))
@@ -110,7 +111,7 @@ class SituationGraph:
 
 
 def task(file_name, num_iterations=10000, num_MC=1000, flexibilieties_list=(0.2, 0.3, 0.4, 0.5), independence_delta=0.05):
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=[6.4*2, 4.8*2], dpi=300)
     for flexibility in tqdm(flexibilieties_list):
         independence_results = []
         for independence in arange(0, 1 + independence_delta, independence_delta):
