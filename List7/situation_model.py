@@ -118,17 +118,23 @@ def task(file_name, num_iterations=10000, num_MC=1000, flexibilieties_list=(0.2,
             results = []
             for _ in range(num_MC):
                 graph = SituationGraph(100)
-                graph.simulate(num_iterations, independence, flexibility)
+                graph.simulate(num_steps=num_iterations, independence=independence, flexibility=flexibility)
                 results.append(graph.concentration())
             independence_results.append(mean(results))
         line, = ax.plot(arange(0, 1 + independence_delta, independence_delta), independence_results, '.')
         line.set_label('f={}'.format(flexibility))
         ax.legend()
+    ax.set_xlabel('Independence')
+    ax.set_ylabel('Concentration')
     os.makedirs('figures', exist_ok=True)
     plt.savefig('figures/{}.png'.format(file_name))
 
 
 if __name__ == '__main__':
     task('task')
+    # num_iterations = 10000
+    # independence = 0.2
+    # flexibility = 0.2
     # graph = SituationGraph(100)
-    # graph.simulate(5000, 0.1, replace=False, flexibility=0.5, no_of_neighbours=4)
+    # # graph.simulate(5000, 0.1, replace=False, flexibility=0.5, no_of_neighbours=4)
+    # graph.simulate(num_iterations, independence, flexibility=flexibility)
