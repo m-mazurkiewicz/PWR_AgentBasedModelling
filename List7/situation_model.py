@@ -110,7 +110,7 @@ class SituationGraph:
         return mean(list(self.spins.values()))
 
 
-def task(file_name, num_iterations=10000, num_MC=1000, flexibilieties_list=(0.2, 0.3, 0.4, 0.5), independence_delta=0.05):
+def task(file_name, num_iterations=10000, num_MC=1000, flexibilieties_list=(0.2, 0.3, 0.4, 0.5), independence_delta=0.025):
     fig, ax = plt.subplots(figsize=[6.4*2, 4.8*2], dpi=300)
     for flexibility in tqdm(flexibilieties_list):
         independence_results = []
