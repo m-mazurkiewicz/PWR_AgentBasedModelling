@@ -32,10 +32,11 @@ def bass_function(t,p,q):
     return (1-np.exp(np.multiply(-(p+q),t)))/(1+q/p*np.exp(np.multiply(-(p+q),t)))
 
 if __name__ == '__main__':
-    network = nx.barabasi_albert_graph(100, 3)
-    # network = nx.complete_graph(1000)
-    p = 0.03
-    q = 0.38
+    num_nodes = 1000
+    network = nx.barabasi_albert_graph(num_nodes, 3)
+    # network = nx.complete_graph(num_nodes)
+    p = 0.01
+    q = 0.4
     model = Bass(network, p, q)
     model.simulate()
     plt.plot(model.historical_awareness, '*')
